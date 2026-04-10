@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { toast } from "react-toastify";
+import { apiFetch } from "@/helpers/httpClient";
 
 const useQrCodeStore = create(
   devtools(
@@ -17,14 +18,9 @@ const useQrCodeStore = create(
 
         set({ loading: true, error: null }, false, "fetchQrCodes/start");
         try {
-          const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/qr-code`, {
-            headers: {
-              "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET,
-              "Content-Type": "application/json",
-            },
+          const data = await apiFetch("/api/qr-code", {
+            headers: { "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET },
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
           set({ qrCodes: data?.data || data, loading: false, lastFetched: Date.now() }, false, "fetchQrCodes/success");
         } catch (err) {
           const message = err.message || "Failed to load QR codes";

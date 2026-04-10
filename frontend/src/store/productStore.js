@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { toast } from "react-toastify";
+import { apiFetch } from "@/helpers/httpClient";
 
 const useProductStore = create(
   devtools(
@@ -17,14 +18,9 @@ const useProductStore = create(
 
         set({ loading: true, error: null }, false, "fetchProducts/start");
         try {
-          const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/product`, {
-            headers: {
-              "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET,
-              "Content-Type": "application/json",
-            },
+          const data = await apiFetch("/api/product", {
+            headers: { "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET },
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
           set({ products: data?.data || data, loading: false, lastFetched: Date.now() }, false, "fetchProducts/success");
         } catch (err) {
           const message = err.message || "Failed to load products";
@@ -44,15 +40,11 @@ const useProductStore = create(
             }
           });
 
-          const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/product`, {
+          const data = await apiFetch("/api/product", {
             method: "POST",
-            headers: {
-              "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET,
-            },
+            headers: { "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET },
             body: formData,
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
           const created = data?.data || data;
           set(
             (state) => ({ products: [created, ...state.products] }),
@@ -70,7 +62,7 @@ const useProductStore = create(
 
       updateProduct: async (id, payload) => {
         try {
-          const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/product/${id}`, {
+          const data = await apiFetch(`/api/product/${id}`, {
             method: "PUT",
             headers: {
               "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET,
@@ -78,8 +70,6 @@ const useProductStore = create(
             },
             body: JSON.stringify(payload),
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
           const updated = data?.data || data;
           set(
             (state) => ({ products: state.products.map((p) => (p._id === id ? updated : p)) }),
@@ -97,13 +87,10 @@ const useProductStore = create(
 
       deleteProduct: async (id) => {
         try {
-          const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/product/${id}`, {
+          await apiFetch(`/api/product/${id}`, {
             method: "DELETE",
-            headers: {
-              "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET,
-            },
+            headers: { "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET },
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
           set(
             (state) => ({ products: state.products.filter((p) => p._id !== id) }),
             false,

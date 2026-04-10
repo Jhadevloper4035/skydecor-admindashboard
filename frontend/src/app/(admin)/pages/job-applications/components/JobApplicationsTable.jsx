@@ -1,14 +1,22 @@
 import { useState, useMemo } from 'react'
-import { Button, Card, Form, InputGroup, Pagination } from 'react-bootstrap'
+import { Card, Form, InputGroup, Pagination } from 'react-bootstrap'
 import IconifyIcon from '@/components/wrappers/IconifyIcon'
 import useJobApplicationsStore from '@/store/jobApplicationsStore'
-import { useReactTable, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, flexRender } from '@tanstack/react-table'
+import {
+  useReactTable,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  flexRender,
+} from '@tanstack/react-table'
 
 const statusVariant = {
-  New: 'soft-primary',
-  Shortlisted: 'soft-warning',
-  Hired: 'soft-success',
-  Rejected: 'soft-danger',
+  pending: 'soft-secondary',
+  reviewed: 'soft-info',
+  shortlisted: 'soft-warning',
+  rejected: 'soft-danger',
+  hired: 'soft-success',
 }
 
 const JobApplicationsTable = () => {
@@ -25,35 +33,48 @@ const JobApplicationsTable = () => {
         cell: ({ row }) => row.index + 1,
         enableSorting: false,
       },
-      { accessorKey: 'fullName', header: 'Name', cell: ({ getValue }) => getValue() },
-      { accessorKey: 'email', header: 'Email', cell: ({ getValue }) => getValue() },
-      { accessorKey: 'mobileNumber', header: 'Phone', cell: ({ getValue }) => getValue() },
-      { accessorKey: 'position', header: 'Position', cell: ({ getValue }) => getValue() },
-      { accessorKey: 'experience', header: 'Experience', cell: ({ getValue }) => getValue() },
-      { accessorKey: 'qualification', header: 'Qualification', cell: ({ getValue }) => getValue() },
-      { accessorKey: 'city', header: 'City', cell: ({ getValue }) => getValue() },
-      { accessorKey: 'resumeUrl', header: 'Resume', cell: ({ getValue }) => getValue() ? <a href={getValue()} target="_blank" rel="noreferrer">View</a> : '-' },
+      { accessorKey: 'fullName', header: 'Name' },
+      { accessorKey: 'email', header: 'Email' },
+      { accessorKey: 'phone', header: 'Phone' },
+      { accessorKey: 'city', header: 'City' },
+      { accessorKey: 'position', header: 'Position' },
+      { accessorKey: 'experience', header: 'Experience' },
+      { accessorKey: 'qualification', header: 'Qualification' },
       {
-        accessorKey: 'createdAt',
-        header: 'Date',
-        cell: ({ getValue }) => getValue() ? new Date(getValue()).toLocaleDateString() : '-',
+        accessorKey: 'currentCompany',
+        header: 'Current Company',
+        cell: ({ getValue }) => getValue() || '-',
+      },
+      {
+        id: 'resume',
+        header: 'Resume',
+        cell: ({ row }) => {
+          const resume = row.original.resume
+          if (!resume?.path) return '-'
+          return (
+            <a href={resume.path} target="_blank" rel="noreferrer">
+              {resume.originalName || 'View'}
+            </a>
+          )
+        },
+        enableSorting: false,
       },
       {
         accessorKey: 'status',
         header: 'Status',
-        cell: ({ getValue }) => (
-          <span className={`badge bg-${statusVariant[getValue()] ?? 'soft-secondary'}`}>{getValue() ?? 'New'}</span>
-        ),
+        cell: ({ getValue }) => {
+          const val = getValue() ?? 'pending'
+          return (
+            <span className={`badge bg-${statusVariant[val] ?? 'soft-secondary'} text-capitalize`}>
+              {val}
+            </span>
+          )
+        },
       },
       {
-        id: 'actions',
-        header: 'Actions',
-        cell: () => (
-          <Button variant="soft-secondary" size="sm">
-            <IconifyIcon icon="bx:edit" className="fs-16" />
-          </Button>
-        ),
-        enableSorting: false,
+        accessorKey: 'submittedAt',
+        header: 'Applied On',
+        cell: ({ getValue }) => getValue() ? new Date(getValue()).toLocaleDateString() : '-',
       },
     ],
     []
@@ -81,7 +102,12 @@ const JobApplicationsTable = () => {
         <div className="d-flex justify-content-between align-items-center">
           <h5 className="mb-0">Job Applications</h5>
           <InputGroup style={{ width: '300px' }}>
-            <Form.Control type="text" placeholder="Search applications..." value={globalFilter ?? ''} onChange={(e) => setGlobalFilter(e.target.value)} />
+            <Form.Control
+              type="text"
+              placeholder="Search applications..."
+              value={globalFilter ?? ''}
+              onChange={(e) => setGlobalFilter(e.target.value)}
+            />
             <InputGroup.Text><IconifyIcon icon="bx:search" /></InputGroup.Text>
           </InputGroup>
         </div>
@@ -92,9 +118,13 @@ const JobApplicationsTable = () => {
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <th key={header.id} onClick={header.column.getToggleSortingHandler()} style={{ cursor: header.column.getCanSort() ? 'pointer' : 'default' }}>
+                  <th
+                    key={header.id}
+                    onClick={header.column.getToggleSortingHandler()}
+                    style={{ cursor: header.column.getCanSort() ? 'pointer' : 'default' }}
+                  >
                     {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                    {{ asc: ' 🔼', desc: ' 🔽' }[header.column.getIsSorted()] ?? null}
+                    {{ asc: ' ▲', desc: ' ▼' }[header.column.getIsSorted()] ?? null}
                   </th>
                 ))}
               </tr>
@@ -109,7 +139,11 @@ const JobApplicationsTable = () => {
               </tr>
             ))}
             {table.getRowModel().rows.length === 0 && (
-              <tr><td colSpan={columns.length} className="text-center text-muted py-4">No job applications found.</td></tr>
+              <tr>
+                <td colSpan={columns.length} className="text-center text-muted py-4">
+                  No job applications found.
+                </td>
+              </tr>
             )}
           </tbody>
         </table>
@@ -118,14 +152,22 @@ const JobApplicationsTable = () => {
         <div className="d-flex justify-content-between align-items-center">
           <div>
             Showing {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} to{' '}
-            {Math.min((table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize, table.getFilteredRowModel().rows.length)} of{' '}
-            {table.getFilteredRowModel().rows.length} entries
+            {Math.min(
+              (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
+              table.getFilteredRowModel().rows.length
+            )} of {table.getFilteredRowModel().rows.length} entries
           </div>
           <Pagination>
             <Pagination.First onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()} />
             <Pagination.Prev onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()} />
             {Array.from({ length: table.getPageCount() }, (_, i) => (
-              <Pagination.Item key={i} active={i === table.getState().pagination.pageIndex} onClick={() => table.setPageIndex(i)}>{i + 1}</Pagination.Item>
+              <Pagination.Item
+                key={i}
+                active={i === table.getState().pagination.pageIndex}
+                onClick={() => table.setPageIndex(i)}
+              >
+                {i + 1}
+              </Pagination.Item>
             ))}
             <Pagination.Next onClick={() => table.nextPage()} disabled={!table.getCanNextPage()} />
             <Pagination.Last onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()} />

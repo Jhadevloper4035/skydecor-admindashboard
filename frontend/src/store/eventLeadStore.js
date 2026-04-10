@@ -29,8 +29,6 @@ const useEventLeadsStore = create(
         try {
           const data = await apiFetch(`/api/lead/event/${place}`);
 
-          console.log("Fetched event leads:", data);
-
           set(
             {
               leads: data?.data || data,

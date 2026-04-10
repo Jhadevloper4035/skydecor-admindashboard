@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { toast } from "react-toastify";
+import { apiFetch } from "@/helpers/httpClient";
 
 const useShowroomStore = create(
   devtools(
@@ -17,13 +18,9 @@ const useShowroomStore = create(
 
         set({ loading: true, error: null }, false, "fetchShowrooms/start");
         try {
-          const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/showrooms`, {
-            headers: {
-              "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET,
-            },
+          const data = await apiFetch("/api/showrooms", {
+            headers: { "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET },
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
           set({ showrooms: data?.data || data, loading: false, lastFetched: Date.now() }, false, "fetchShowrooms/success");
         } catch (err) {
           const message = err.message || "Failed to load showrooms";
@@ -35,7 +32,6 @@ const useShowroomStore = create(
       createShowroom: async (payload) => {
         try {
           const formData = new FormData();
-
           Object.entries(payload).forEach(([key, value]) => {
             if (key === "images" && Array.isArray(value)) {
               value.forEach((item) => formData.append("images", item));
@@ -44,15 +40,11 @@ const useShowroomStore = create(
             }
           });
 
-          const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/showrooms`, {
+          const data = await apiFetch("/api/showrooms", {
             method: "POST",
-            headers: {
-              "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET,
-            },
+            headers: { "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET },
             body: formData,
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
           const created = data?.data || data;
           set((state) => ({ showrooms: [created, ...state.showrooms] }), false, "createShowroom/success");
           toast.success("Showroom created successfully", { position: "top-right", toastId: "showroom-create-success" });
@@ -67,7 +59,6 @@ const useShowroomStore = create(
       updateShowroom: async (id, payload) => {
         try {
           const formData = new FormData();
-
           Object.entries(payload).forEach(([key, value]) => {
             if (key === "images" && Array.isArray(value)) {
               value.forEach((item) => {
@@ -82,15 +73,11 @@ const useShowroomStore = create(
             }
           });
 
-          const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/showrooms/${id}`, {
+          const data = await apiFetch(`/api/showrooms/${id}`, {
             method: "PUT",
-            headers: {
-              "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET,
-            },
+            headers: { "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET },
             body: formData,
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
           const updated = data?.data || data;
           set(
             (state) => ({ showrooms: state.showrooms.map((s) => (s._id === id ? updated : s)) }),
@@ -108,13 +95,10 @@ const useShowroomStore = create(
 
       deleteShowroom: async (id) => {
         try {
-          const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/showrooms/${id}`, {
+          await apiFetch(`/api/showrooms/${id}`, {
             method: "DELETE",
-            headers: {
-              "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET,
-            },
+            headers: { "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET },
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
           set(
             (state) => ({ showrooms: state.showrooms.filter((s) => s._id !== id) }),
             false,

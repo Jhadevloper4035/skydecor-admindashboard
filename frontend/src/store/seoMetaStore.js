@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { toast } from "react-toastify";
+import { apiFetch } from "@/helpers/httpClient";
 
 const useSeoMetaStore = create(
   devtools(
@@ -17,14 +18,9 @@ const useSeoMetaStore = create(
 
         set({ loading: true, error: null }, false, "fetchSeoMetas/start");
         try {
-          const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/seo-meta`, {
-            headers: {
-              "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET,
-              "Content-Type": "application/json",
-            },
+          const data = await apiFetch("/api/seo-meta", {
+            headers: { "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET },
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
           set(
             { seoMetas: data?.data || data, loading: false, lastFetched: Date.now() },
             false,
@@ -39,7 +35,7 @@ const useSeoMetaStore = create(
 
       createSeoMeta: async (payload) => {
         try {
-          const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/seo-meta`, {
+          const data = await apiFetch("/api/seo-meta", {
             method: "POST",
             headers: {
               "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET,
@@ -47,8 +43,6 @@ const useSeoMetaStore = create(
             },
             body: JSON.stringify(payload),
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
           const created = data?.data || data;
           set(
             (state) => ({ seoMetas: [created, ...state.seoMetas] }),
@@ -66,7 +60,7 @@ const useSeoMetaStore = create(
 
       updateSeoMeta: async (id, payload) => {
         try {
-          const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/seo-meta/${id}`, {
+          const data = await apiFetch(`/api/seo-meta/${id}`, {
             method: "PUT",
             headers: {
               "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET,
@@ -74,8 +68,6 @@ const useSeoMetaStore = create(
             },
             body: JSON.stringify(payload),
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
           const updated = data?.data || data;
           set(
             (state) => ({
@@ -95,13 +87,10 @@ const useSeoMetaStore = create(
 
       deleteSeoMeta: async (id) => {
         try {
-          const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/seo-meta/${id}`, {
+          await apiFetch(`/api/seo-meta/${id}`, {
             method: "DELETE",
-            headers: {
-              "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET,
-            },
+            headers: { "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET },
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
           set(
             (state) => ({ seoMetas: state.seoMetas.filter((s) => s._id !== id) }),
             false,

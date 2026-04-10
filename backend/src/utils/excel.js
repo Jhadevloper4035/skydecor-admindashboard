@@ -3,16 +3,22 @@ const XLSX = require("xlsx");
 const MAX_DOWNLOAD_LIMIT = 10000;
 
 /**
- * Converts the productType array to a comma-separated string
- * so it renders cleanly in a single Excel cell.
+ * Normalises field names from DB (userType, productType) to the display
+ * names the frontend tables expect (UserType, ProductEnquire), and
+ * stringifies the productType array so it renders in a single cell.
  */
 function formatProductType(lead) {
+  const { productType, userType, ...rest } = lead;
+
+  const rawArray = productType || rest.ProductEnquire;
+  const productEnquireStr = Array.isArray(rawArray) && rawArray.length > 0
+    ? rawArray.join(", ")
+    : (typeof rawArray === "string" ? rawArray : "");
+
   return {
-    ...lead,
-    ProductEnquire:
-      Array.isArray(lead.ProductEnquire) && lead.ProductEnquire.length > 0
-        ? lead.ProductEnquire.join(", ")
-        : lead.ProductEnquire || "",
+    ...rest,
+    UserType: rest.UserType || userType || "",
+    ProductEnquire: productEnquireStr,
   };
 }
 

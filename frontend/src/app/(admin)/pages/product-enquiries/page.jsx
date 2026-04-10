@@ -1,10 +1,11 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import PageBreadcrumb from '@/components/layout/PageBreadcrumb'
 import PageMetaData from '@/components/PageTitle'
 import { Col, Row, Button } from 'react-bootstrap'
 import useProductEnquiriesStore from '@/store/productEnquiriesStore'
 import ProductEnquiriesTable from './components/ProductEnquiriesTable'
 import { StatCard } from '../../dashboard/analytics/components/Stats'
+import { downloadExcel } from '@/helpers/httpClient'
 
 const ProductEnquiries = () => {
   const { leads, fetchLeads } = useProductEnquiriesStore()
@@ -43,8 +44,15 @@ const ProductEnquiries = () => {
     ]
   }, [leads])
 
-  const handleDownloadExcel = () => {
-    window.open('/api/lead/product-enquiry/download', '_blank')
+  const [downloading, setDownloading] = useState(false)
+
+  const handleDownloadExcel = async () => {
+    setDownloading(true)
+    try {
+      await downloadExcel('/api/lead/product-enquiry/download', 'Product-Enquiries.xlsx')
+    } finally {
+      setDownloading(false)
+    }
   }
 
   return (
@@ -62,8 +70,9 @@ const ProductEnquiries = () => {
 
       <Row className="mb-4 justify-content-end">
         <Col xs="auto">
-          <Button variant="success" onClick={handleDownloadExcel}>
-            Download Excel
+          <Button variant="success" onClick={handleDownloadExcel} disabled={downloading}>
+            {downloading && <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" />}
+            {downloading ? 'Preparing...' : 'Download Excel'}
           </Button>
         </Col>
       </Row>

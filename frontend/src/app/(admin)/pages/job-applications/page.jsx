@@ -1,10 +1,11 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import PageBreadcrumb from '@/components/layout/PageBreadcrumb'
 import PageMetaData from '@/components/PageTitle'
 import { Col, Row, Button } from 'react-bootstrap'
 import useJobApplicationsStore from '@/store/jobApplicationsStore'
 import JobApplicationsTable from './components/JobApplicationsTable'
 import { StatCard } from '../../dashboard/analytics/components/Stats'
+import { downloadExcel } from '@/helpers/httpClient'
 
 const JobApplications = () => {
   const { leads, fetchLeads } = useJobApplicationsStore()
@@ -14,21 +15,21 @@ const JobApplications = () => {
   }, [fetchLeads])
 
   const stats = useMemo(() => {
-    const positionCounts = leads.reduce((acc, lead) => {
-      const key = lead.position || 'Unknown'
+    const deptCounts = leads.reduce((acc, lead) => {
+      const key = lead.department || 'General'
       acc[key] = (acc[key] || 0) + 1
       return acc
     }, {})
 
     const variants = ['primary', 'success', 'danger', 'warning', 'info']
-    const positionStats = Object.entries(positionCounts)
+    const deptStats = Object.entries(deptCounts)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 4)
-      .map(([position, count], idx) => ({
+      .map(([dept, count], idx) => ({
         amount: count.toString(),
         icon: 'iconamoon:profile-circle-duotone',
         variant: variants[idx % variants.length],
-        name: position,
+        name: dept,
       }))
 
     return [
@@ -36,14 +37,21 @@ const JobApplications = () => {
         amount: leads.length.toString(),
         icon: 'iconamoon:contact-duotone',
         variant: 'primary',
-        name: 'Total Applications',
+        name: 'Total Listings',
       },
-      ...positionStats,
+      ...deptStats,
     ]
   }, [leads])
 
-  const handleDownloadExcel = () => {
-    window.open('/api/lead/job-application/download', '_blank')
+  const [downloading, setDownloading] = useState(false)
+
+  const handleDownloadExcel = async () => {
+    setDownloading(true)
+    try {
+      await downloadExcel('/api/lead/job-application/download', 'Job-Applications.xlsx')
+    } finally {
+      setDownloading(false)
+    }
   }
 
   return (
@@ -61,8 +69,9 @@ const JobApplications = () => {
 
       <Row className="mb-4 justify-content-end">
         <Col xs="auto">
-          <Button variant="success" onClick={handleDownloadExcel}>
-            Download Excel
+          <Button variant="success" onClick={handleDownloadExcel} disabled={downloading}>
+            {downloading && <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" />}
+            {downloading ? 'Preparing...' : 'Download Excel'}
           </Button>
         </Col>
       </Row>

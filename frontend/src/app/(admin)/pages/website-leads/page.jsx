@@ -1,8 +1,9 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import PageBreadcrumb from '@/components/layout/PageBreadcrumb'
 import PageMetaData from '@/components/PageTitle'
 import { Col, Row, Button } from 'react-bootstrap'
 import useWebsiteLeadsStore from '@/store/websiteLeadsStore'
+import { downloadExcel } from '@/helpers/httpClient'
 import WebsiteLeadsTable from './components/WebsiteLeadsTable'
 import { StatCard } from '../../dashboard/analytics/components/Stats'
 
@@ -41,8 +42,15 @@ const WebsiteLeads = () => {
     ]
   }, [leads])
 
-  const handleDownloadExcel = () => {
-    window.open('/api/lead/website/download', '_blank')
+  const [downloading, setDownloading] = useState(false)
+
+  const handleDownloadExcel = async () => {
+    setDownloading(true)
+    try {
+      await downloadExcel('/api/lead/website/download', 'Website-Enquiries.xlsx')
+    } finally {
+      setDownloading(false)
+    }
   }
 
   return (
@@ -60,8 +68,9 @@ const WebsiteLeads = () => {
 
       <Row className="mb-4 justify-content-end">
         <Col xs="auto">
-          <Button variant="success" onClick={handleDownloadExcel}>
-            Download Excel
+          <Button variant="success" onClick={handleDownloadExcel} disabled={downloading}>
+            {downloading && <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" />}
+            {downloading ? 'Preparing...' : 'Download Excel'}
           </Button>
         </Col>
       </Row>

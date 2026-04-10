@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { toast } from "react-toastify";
+import { apiFetch } from "@/helpers/httpClient";
+
 const useProductEnquiriesStore = create(
   devtools(
     (set, get) => ({
@@ -16,14 +18,9 @@ const useProductEnquiriesStore = create(
 
         set({ loading: true, error: null }, false, "fetchLeads/start");
         try {
-          const res = await fetch(`${import.meta.env.VITE_WEBSITE_BASE_URL}/api/lead/productEnquiry`, {
-            headers: {
-              "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET,
-              "Content-Type": "application/json",
-            },
+          const data = await apiFetch("/api/lead/productEnquiry", {
+            headers: { "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET },
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
           set({ leads: data?.data || data, loading: false, lastFetched: Date.now() }, false, "fetchLeads/success");
         } catch (err) {
           const message = err.message || "Failed to load product enquiries";

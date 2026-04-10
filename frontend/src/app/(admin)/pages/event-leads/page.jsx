@@ -1,10 +1,11 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import PageBreadcrumb from '@/components/layout/PageBreadcrumb'
 import PageMetaData from '@/components/PageTitle'
 import { Col, Row, Button } from 'react-bootstrap'
 
 import useEventLeadsStore from '@/store/eventLeadStore'
+import { downloadExcel } from '@/helpers/httpClient'
 import EventLeadsTable from './components/EventLeadTable'
 import { StatCard } from '../../dashboard/analytics/components/Stats'
 
@@ -46,13 +47,18 @@ const EventLeads = () => {
     ]
   }, [leads])
 
-  const handleDownloadExcel = () => {
-    window.open(`/api/lead/event/download/${place}`, '_blank')
+  const [downloading, setDownloading] = useState(false)
+
+  const handleDownloadExcel = async () => {
+    setDownloading(true)
+    try {
+      await downloadExcel(`/api/lead/event/download/${place}`, `Event-Leads-${place}.xlsx`)
+    } finally {
+      setDownloading(false)
+    }
   }
 
-  const handleAddNewLead = async () => {
-    window.open(`/api/lead/event/download/${place}`, '_blank')
-  }
+  const handleAddNewLead = handleDownloadExcel
 
   return (
     <>
@@ -74,8 +80,9 @@ const EventLeads = () => {
           <Button variant="primary" className="me-2" onClick={handleAddNewLead}>
             Add New Lead
           </Button>
-          <Button variant="success" onClick={handleDownloadExcel}>
-            Download Excel
+          <Button variant="success" onClick={handleDownloadExcel} disabled={downloading}>
+            {downloading && <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" />}
+            {downloading ? 'Preparing...' : 'Download Excel'}
           </Button>
         </Col>
       </Row>

@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { toast } from "react-toastify";
+import { apiFetch } from "@/helpers/httpClient";
 
-const BASE = import.meta.env.VITE_WEBSITE_BASE_URL;
 const SECRET = import.meta.env.VITE_ADMIN_SECRET;
 
 const useWebsiteLeadsStore = create(
@@ -20,11 +20,9 @@ const useWebsiteLeadsStore = create(
 
         set({ loading: true, error: null }, false, "fetchLeads/start");
         try {
-          const res = await fetch(`${BASE}/api/lead/contactleads`, {
+          const data = await apiFetch("/api/lead/contactleads", {
             headers: { "x-admin-secret": SECRET },
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
           set({ leads: data?.data || data, loading: false, lastFetched: Date.now() }, false, "fetchLeads/success");
         } catch (err) {
           const message = err.message || "Failed to load website leads";
@@ -36,7 +34,7 @@ const useWebsiteLeadsStore = create(
       createLead: async (payload) => {
         try {
           const isFormData = payload instanceof FormData;
-          const res = await fetch(`${BASE}/api/lead/contactleads`, {
+          const data = await apiFetch("/api/lead/contactleads", {
             method: "POST",
             headers: {
               "x-admin-secret": SECRET,
@@ -44,8 +42,6 @@ const useWebsiteLeadsStore = create(
             },
             body: isFormData ? payload : JSON.stringify(payload),
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
           const created = data?.data || data;
           set(
             (state) => ({ leads: [created, ...state.leads] }),
@@ -64,7 +60,7 @@ const useWebsiteLeadsStore = create(
       updateLead: async (id, payload) => {
         try {
           const isFormData = payload instanceof FormData;
-          const res = await fetch(`${BASE}/api/lead/contactleads/${id}`, {
+          const data = await apiFetch(`/api/lead/contactleads/${id}`, {
             method: "PUT",
             headers: {
               "x-admin-secret": SECRET,
@@ -72,8 +68,6 @@ const useWebsiteLeadsStore = create(
             },
             body: isFormData ? payload : JSON.stringify(payload),
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
           const updated = data?.data || data;
           set(
             (state) => ({ leads: state.leads.map((l) => (l._id === id ? updated : l)) }),
@@ -91,11 +85,10 @@ const useWebsiteLeadsStore = create(
 
       deleteLead: async (id) => {
         try {
-          const res = await fetch(`${BASE}/api/lead/contactleads/${id}`, {
+          await apiFetch(`/api/lead/contactleads/${id}`, {
             method: "DELETE",
             headers: { "x-admin-secret": SECRET },
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
           set(
             (state) => ({ leads: state.leads.filter((l) => l._id !== id) }),
             false,

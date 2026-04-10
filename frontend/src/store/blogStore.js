@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { toast } from "react-toastify";
+import { apiFetch } from "@/helpers/httpClient";
 
 const useBlogStore = create(
   devtools(
@@ -17,14 +18,9 @@ const useBlogStore = create(
 
         set({ loading: true, error: null }, false, "fetchBlogs/start");
         try {
-          const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/blog`, {
-            headers: {
-              "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET,
-              "Content-Type": "application/json",
-            },
+          const data = await apiFetch("/api/blog", {
+            headers: { "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET },
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
           set({ blogs: data?.data || data, loading: false, lastFetched: Date.now() }, false, "fetchBlogs/success");
         } catch (err) {
           const message = err.message || "Failed to load blogs";
@@ -35,7 +31,6 @@ const useBlogStore = create(
 
       createBlog: async (payload) => {
         try {
-          // Build FormData so the image file is sent as multipart/form-data
           const formData = new FormData();
           Object.entries(payload).forEach(([key, value]) => {
             if (value !== null && value !== undefined) {
@@ -43,16 +38,11 @@ const useBlogStore = create(
             }
           });
 
-          // No Content-Type header — browser sets multipart/form-data + boundary automatically
-          const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/blog`, {
+          const data = await apiFetch("/api/blog", {
             method: "POST",
-            headers: {
-              "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET,
-            },
+            headers: { "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET },
             body: formData,
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
           const created = data?.data || data;
           set(
             (state) => ({ blogs: [created, ...state.blogs] }),
@@ -70,7 +60,7 @@ const useBlogStore = create(
 
       updateBlog: async (id, payload) => {
         try {
-          const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/blog/${id}`, {
+          const data = await apiFetch(`/api/blog/${id}`, {
             method: "PUT",
             headers: {
               "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET,
@@ -78,8 +68,6 @@ const useBlogStore = create(
             },
             body: JSON.stringify(payload),
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
           const updated = data?.data || data;
           set(
             (state) => ({ blogs: state.blogs.map((b) => (b._id === id ? updated : b)) }),
@@ -97,13 +85,10 @@ const useBlogStore = create(
 
       deleteBlog: async (id) => {
         try {
-          const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/blog/${id}`, {
+          await apiFetch(`/api/blog/${id}`, {
             method: "DELETE",
-            headers: {
-              "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET,
-            },
+            headers: { "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET },
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
           set(
             (state) => ({ blogs: state.blogs.filter((b) => b._id !== id) }),
             false,
