@@ -1,0 +1,39 @@
+{
+  "name": "skydecor-backend",
+  "version": "2.0.0",
+  "description": "Skydecor lead generation — React-ready REST API",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon src/server.js",
+    "start": "cross-env NODE_ENV=production node src/server.js",
+    "start:pm2": "cross-env NODE_ENV=production pm2 start src/server.js -i max --name skydecor-server",
+    "lint": "eslint src/**/*.js",
+    "lint:fix": "eslint src/**/*.js --fix",
+    "format": "prettier --write src/**/*.js"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.3.2",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.17.1",
+    "morgan": "^1.10.1",
+    "validator": "^13.15.35",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0",
+    "eslint": "^10.2.0",
+    "eslint-config-prettier": "^10.1.8",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.8.1"
+  }
+}
