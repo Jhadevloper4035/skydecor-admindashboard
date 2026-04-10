@@ -22,6 +22,7 @@ backend/.env.local
 backend/.env.development
 backend/.env.test
 backend/.env.production
+backend/.env.*
 
 # Logs
 logs/
