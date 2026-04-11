@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Badge, Button, Card, CardBody, Col, Row, Spinner } from 'react-bootstrap';
+import Swal from 'sweetalert2';
 import PageBreadcrumb from '@/components/layout/PageBreadcrumb';
 import PageMetaData from '@/components/PageTitle';
 import IconifyIcon from '@/components/wrappers/IconifyIcon';
@@ -24,11 +25,33 @@ const SeoMetaList = () => {
     );
   });
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Delete this SEO meta entry?')) return;
-    setDeleting(id);
-    await deleteSeoMeta(id);
+  const handleDelete = async (seo) => {
+    const result = await Swal.fire({
+      title: 'Delete SEO meta?',
+      text: `This will permanently delete "${seo.pageName}".`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Confirm',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true,
+      focusCancel: true,
+    });
+
+    if (!result.isConfirmed) return;
+
+    setDeleting(seo._id);
+    const ok = await deleteSeoMeta(seo._id);
     setDeleting(null);
+
+    if (ok) {
+      await Swal.fire({
+        title: 'Deleted',
+        text: 'The SEO meta entry was deleted successfully.',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    }
   };
 
   return (
@@ -116,7 +139,7 @@ const SeoMetaList = () => {
                             variant="outline-danger"
                             title="Delete"
                             disabled={deleting === seo._id}
-                            onClick={() => handleDelete(seo._id)}
+                            onClick={() => handleDelete(seo)}
                           >
                             {deleting === seo._id ? (
                               <Spinner animation="border" size="sm" />

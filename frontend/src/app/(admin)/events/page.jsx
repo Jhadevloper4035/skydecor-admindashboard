@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Badge, Card, CardBody, Col, Row, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import PageBreadcrumb from '@/components/layout/PageBreadcrumb';
 import PageMetaData from '@/components/PageTitle';
 import IconifyIcon from '@/components/wrappers/IconifyIcon';
 import useEventStore from '@/store/eventStore';
 
-const EventCard = ({ event }) => {
+const EventCard = ({ event, onDelete, deleting }) => {
   const dateLabel = event.date
     ? new Date(event.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
     : '—';
@@ -67,6 +68,15 @@ const EventCard = ({ event }) => {
           >
             <IconifyIcon icon="bx:edit" />
           </Link>
+          <button
+            type="button"
+            className="btn btn-sm btn-soft-danger flex-fill py-1"
+            title="Delete"
+            onClick={() => onDelete(event)}
+            disabled={deleting}
+          >
+            {deleting ? <Spinner animation="border" size="sm" /> : <IconifyIcon icon="bx:trash" />}
+          </button>
         </div>
       </Card>
     </Col>
@@ -74,8 +84,9 @@ const EventCard = ({ event }) => {
 };
 
 const Events = () => {
-  const { events, loading, fetchEvents } = useEventStore();
+  const { events, loading, fetchEvents, deleteEvent } = useEventStore();
   const [search, setSearch] = useState('');
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     fetchEvents();
@@ -96,6 +107,35 @@ const Events = () => {
     () => [...filtered].sort((a, b) => new Date(b.date) - new Date(a.date)),
     [filtered]
   );
+
+  const handleDelete = async (event) => {
+    const result = await Swal.fire({
+      title: 'Delete event?',
+      text: `This will permanently delete "${event.title}".`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Confirm',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true,
+      focusCancel: true,
+    });
+
+    if (!result.isConfirmed) return;
+
+    setDeletingId(event._id);
+    const ok = await deleteEvent(event._id);
+    setDeletingId(null);
+
+    if (ok) {
+      await Swal.fire({
+        title: 'Deleted',
+        text: 'The event was deleted successfully.',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    }
+  };
 
   return (
     <>
@@ -132,7 +172,12 @@ const Events = () => {
       ) : (
         <Row className="g-3">
           {sorted.map((event) => (
-            <EventCard key={event._id} event={event} />
+            <EventCard
+              key={event._id}
+              event={event}
+              onDelete={handleDelete}
+              deleting={deletingId === event._id}
+            />
           ))}
         </Row>
       )}

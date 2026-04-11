@@ -7,6 +7,11 @@ import PageMetaData from '@/components/PageTitle';
 import IconifyIcon from '@/components/wrappers/IconifyIcon';
 import useBlogStore from '@/store/blogStore';
 
+const imageSrc = (value) => {
+  if (!value) return '';
+  return /^https?:\/\//i.test(value) ? value : `https://skydecor.in/${value}`;
+};
+
 const Field = ({ label, value }) => (
   <div className="mb-3">
     <p className="mb-1 text-muted fs-12 fw-medium text-uppercase">{label}</p>
@@ -53,7 +58,7 @@ const BlogDetail = () => {
             <CardBody className="p-0">
               {blog.image ? (
                 <img
-                  src={`https://skydecor.in/${blog.image}`}
+                  src={imageSrc(blog.image)}
                   alt={blog.title}
                   className="w-100 rounded-top"
                   style={{ height: 220, objectFit: 'cover' }}

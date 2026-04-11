@@ -11,7 +11,6 @@ const blogSchema = new mongoose.Schema(
         },
         url: {
             type: String,
-            required: true,
             unique: true,
             trim: true,
             index: true,
@@ -61,11 +60,13 @@ const blogSchema = new mongoose.Schema(
 );
 
 //
-// 🔹 Pre-save hook to auto-generate clean URL from title if not provided
+// 🔹 Pre-validate hook to auto-generate and normalize slug values
 //
-blogSchema.pre("save", function (next) {
-    if (!this.url && this.title) {
+blogSchema.pre("validate", function (next) {
+    if ((!this.url || !this.url.trim()) && this.title) {
         this.url = slugify(this.title, { lower: true, strict: true });
+    } else if (this.url) {
+        this.url = slugify(this.url, { lower: true, strict: true });
     }
     next();
 });

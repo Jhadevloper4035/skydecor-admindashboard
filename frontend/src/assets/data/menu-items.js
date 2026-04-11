@@ -160,12 +160,6 @@ export const MENU_ITEMS = [
         url: '/blogs/create',
         parentKey: 'blogs',
       },
-      {
-        key: 'blogs-update',
-        label: 'Update Blog',
-        url: '/blogs',
-        parentKey: 'blogs',
-      },
     ],
   },
   {
@@ -183,12 +177,6 @@ export const MENU_ITEMS = [
         key: 'events-create',
         label: 'Create Event',
         url: '/events/create',
-        parentKey: 'events',
-      },
-      {
-        key: 'events-update',
-        label: 'Update Event',
-        url: '/events',
         parentKey: 'events',
       },
     ],
@@ -210,12 +198,6 @@ export const MENU_ITEMS = [
         url: '/showrooms/create',
         parentKey: 'showrooms',
       },
-      {
-        key: 'showrooms-update',
-        label: 'Update Showroom',
-        url: '/showrooms',
-        parentKey: 'showrooms',
-      },
     ],
   },
   {
@@ -233,12 +215,6 @@ export const MENU_ITEMS = [
         key: 'seo-meta-create',
         label: 'Create SEO Meta',
         url: '/seo-meta/create',
-        parentKey: 'seo-meta',
-      },
-      {
-        key: 'seo-meta-update',
-        label: 'Update SEO Meta',
-        url: '/seo-meta',
         parentKey: 'seo-meta',
       },
     ],

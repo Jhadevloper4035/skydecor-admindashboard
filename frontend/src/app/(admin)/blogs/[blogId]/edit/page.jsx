@@ -11,6 +11,7 @@ import TextAreaFormInput from '@/components/form/TextAreaFormInput';
 import SelectFormInput from '@/components/form/SelectFormInput';
 import IconifyIcon from '@/components/wrappers/IconifyIcon';
 import useBlogStore from '@/store/blogStore';
+import ImageUploader from '@/components/ImageUploader';
 
 const STATUS_OPTIONS = [
   { value: 'active', label: 'Active' },
@@ -30,28 +31,13 @@ const QUILL_MODULES = {
   ],
 };
 
-const ImagePreview = ({ url }) => {
-  if (!url) return null;
-  return (
-    <div className="mt-2 border rounded overflow-hidden" style={{ width: '100%', maxWidth: 360, height: 200 }}>
-      <img
-        src={url}
-        alt="Preview"
-        className="w-100 h-100"
-        style={{ objectFit: 'cover' }}
-        onError={(e) => { e.target.style.display = 'none'; }}
-      />
-    </div>
-  );
-};
-
 const EditBlog = () => {
   const { blogId } = useParams();
   const navigate = useNavigate();
   const { blogs, loading, fetchBlogs, updateBlog } = useBlogStore();
   const [saving, setSaving] = useState(false);
   const [content, setContent] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [coverImage, setCoverImage] = useState('');
 
   const { control, handleSubmit, reset } = useForm();
 
@@ -74,7 +60,7 @@ const EditBlog = () => {
         meta_description: blog.meta_description ?? '',
       });
       setContent(blog.text ?? '');
-      setImageUrl(blog.image ?? '');
+      setCoverImage(blog.image ?? '');
     }
   }, [blog, reset]);
 
@@ -89,7 +75,7 @@ const EditBlog = () => {
     const payload = {
       title:            values.title,
       url:              values.url,
-      image:            imageUrl,
+      image:            coverImage,
       text:             content,
       status:           values.status,
       author:           values.author,
@@ -122,7 +108,6 @@ const EditBlog = () => {
             <CardBody>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Row>
-                  {/* Title */}
                   <Col md={8}>
                     <TextFormInput
                       control={control}
@@ -132,8 +117,6 @@ const EditBlog = () => {
                       containerClassName="mb-3"
                     />
                   </Col>
-
-                  {/* Status */}
                   <Col md={4}>
                     <SelectFormInput
                       control={control}
@@ -143,8 +126,6 @@ const EditBlog = () => {
                       containerClassName="mb-3"
                     />
                   </Col>
-
-                  {/* URL slug */}
                   <Col md={8}>
                     <TextFormInput
                       control={control}
@@ -154,8 +135,6 @@ const EditBlog = () => {
                       containerClassName="mb-3"
                     />
                   </Col>
-
-                  {/* Author */}
                   <Col md={4}>
                     <TextFormInput
                       control={control}
@@ -166,37 +145,19 @@ const EditBlog = () => {
                     />
                   </Col>
 
-                  {/* Image URL + live preview */}
                   <Col md={12}>
                     <div className="mb-3">
-                      <label className="form-label">Image URL</label>
-                      <div className="input-group">
-                        <span className="input-group-text">
-                          <IconifyIcon icon="bx:image" />
-                        </span>
-                        <input
-                          type="url"
-                          className="form-control"
-                          placeholder="https://cdn.example.com/blog-image.jpg"
-                          value={imageUrl}
-                          onChange={(e) => setImageUrl(e.target.value)}
-                        />
-                        {imageUrl && (
-                          <button
-                            type="button"
-                            className="btn btn-outline-secondary"
-                            onClick={() => setImageUrl('')}
-                            title="Clear"
-                          >
-                            <IconifyIcon icon="bx:x" />
-                          </button>
-                        )}
-                      </div>
-                      <ImagePreview url={imageUrl} />
+                      <label className="form-label">Blog Cover Image</label>
+                      <ImageUploader
+                        folder="blogs"
+                        multiple={false}
+                        value={coverImage ? [coverImage] : []}
+                        onComplete={([key]) => setCoverImage(key)}
+                        onRemove={() => setCoverImage('')}
+                      />
                     </div>
                   </Col>
 
-                  {/* Quill rich text editor */}
                   <Col md={12}>
                     <div className="mb-3">
                       <label className="form-label">Blog Content</label>
@@ -211,7 +172,6 @@ const EditBlog = () => {
                     </div>
                   </Col>
 
-                  {/* SEO section */}
                   <Col md={12}>
                     <hr className="my-3" />
                     <h6 className="text-muted mb-3">SEO / Meta Fields</h6>

@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Badge, Card, CardBody, Col, Row, Spinner } from 'react-bootstrap';
+import Swal from 'sweetalert2';
 import PageBreadcrumb from '@/components/layout/PageBreadcrumb';
 import PageMetaData from '@/components/PageTitle';
 import IconifyIcon from '@/components/wrappers/IconifyIcon';
@@ -16,7 +17,8 @@ const Field = ({ label, value }) => (
 const EventDetail = () => {
   const { eventId } = useParams();
   const navigate = useNavigate();
-  const { events, loading, fetchEvents } = useEventStore();
+  const { events, loading, fetchEvents, deleteEvent } = useEventStore();
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     fetchEvents();
@@ -43,6 +45,36 @@ const EventDetail = () => {
   const dateLabel = event.date
     ? new Date(event.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })
     : '—';
+
+  const handleDelete = async () => {
+    const result = await Swal.fire({
+      title: 'Delete event?',
+      text: `This will permanently delete "${event.title}".`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Confirm',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true,
+      focusCancel: true,
+    });
+
+    if (!result.isConfirmed) return;
+
+    setDeleting(true);
+    const ok = await deleteEvent(eventId);
+    if (ok) {
+      await Swal.fire({
+        title: 'Deleted',
+        text: 'The event was deleted successfully.',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+      navigate('/events');
+    } else {
+      setDeleting(false);
+    }
+  };
 
   return (
     <>
@@ -83,13 +115,25 @@ const EventDetail = () => {
                 </p>
               </div>
             </CardBody>
-            <div className="border-top p-3 d-flex gap-2">
+            <div className="border-top p-3 d-flex gap-2 flex-wrap">
               <Link to={`/events/${eventId}/edit`} className="btn btn-primary flex-fill">
                 <IconifyIcon icon="bx:edit" className="me-1" />Edit
               </Link>
               <Link to="/events" className="btn btn-outline-secondary flex-fill">
                 <IconifyIcon icon="bx:arrow-back" className="me-1" />Back
               </Link>
+              <button
+                type="button"
+                className="btn btn-danger w-100 mt-1"
+                onClick={handleDelete}
+                disabled={deleting}
+              >
+                {deleting
+                  ? <Spinner animation="border" size="sm" className="me-1" />
+                  : <IconifyIcon icon="bx:trash" className="me-1" />
+                }
+                Delete
+              </button>
             </div>
           </Card>
         </Col>

@@ -7,6 +7,7 @@ import PageMetaData from '@/components/PageTitle';
 import TextFormInput from '@/components/form/TextFormInput';
 import SelectFormInput from '@/components/form/SelectFormInput';
 import useProductStore from '@/store/productStore';
+import ImageUploader from '@/components/ImageUploader';
 
 const STATUS_OPTIONS = [
   { value: true, label: 'Active' },
@@ -18,6 +19,7 @@ const EditProduct = () => {
   const navigate = useNavigate();
   const { products, loading, fetchProducts, updateProduct } = useProductStore();
   const [saving, setSaving] = useState(false);
+  const [productImage, setProductImage] = useState('');
 
   const { control, handleSubmit, reset } = useForm();
 
@@ -40,10 +42,10 @@ const EditProduct = () => {
         size:         product.size         ?? '',
         thickness:    product.thickness    ?? '',
         width:        product.width        ?? '',
-        image:        product.image        ?? '',
         pdfUrlPath:   product.pdfUrlPath   ?? '',
         isActive:     product.isActive     ?? true,
       });
+      setProductImage(product.image ?? '');
     }
   }, [product, reset]);
 
@@ -55,7 +57,7 @@ const EditProduct = () => {
 
   const onSubmit = async (values) => {
     setSaving(true);
-    const result = await updateProduct(productId, values);
+    const result = await updateProduct(productId, { ...values, image: productImage });
     setSaving(false);
     if (result) navigate(`/ecommerce/products/${productId}`);
   };
@@ -111,9 +113,20 @@ const EditProduct = () => {
                   <Col md={4}>
                     <TextFormInput control={control} name="width" label="Width" placeholder="e.g. 1220mm" containerClassName="mb-3" />
                   </Col>
+
                   <Col md={12}>
-                    <TextFormInput control={control} name="image" label="Image URL" placeholder="https://..." containerClassName="mb-3" />
+                    <div className="mb-3">
+                      <label className="form-label">Product Image</label>
+                      <ImageUploader
+                        folder="products"
+                        multiple={false}
+                        value={productImage ? [productImage] : []}
+                        onComplete={([key]) => setProductImage(key)}
+                        onRemove={() => setProductImage('')}
+                      />
+                    </div>
                   </Col>
+
                   <Col md={12}>
                     <TextFormInput control={control} name="pdfUrlPath" label="PDF URL" placeholder="https://..." containerClassName="mb-3" />
                   </Col>

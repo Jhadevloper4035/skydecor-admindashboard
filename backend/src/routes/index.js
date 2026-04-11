@@ -11,6 +11,11 @@ const showroomAdminRoute = require("./secure/showroom.route.js");
 const leadAdminRoute = require("./secure/lead.routes.js");
 const authAdminRoute = require("./auth.routes.js");
 
+const uploadRoute = require("./upload.route.js");
+const healthRoute = require("./health.route.js");
+
+router.use("/upload", uploadRoute);
+router.use("/health", healthRoute);
 
 router.use("/auth", authAdminRoute);
 router.use("/lead", leadAdminRoute);

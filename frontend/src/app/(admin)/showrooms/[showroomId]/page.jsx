@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Badge, Card, CardBody, Col, Row, Spinner } from 'react-bootstrap';
+import Swal from 'sweetalert2';
 import PageBreadcrumb from '@/components/layout/PageBreadcrumb';
 import PageMetaData from '@/components/PageTitle';
 import IconifyIcon from '@/components/wrappers/IconifyIcon';
@@ -14,7 +15,10 @@ const Field = ({ label, value }) => (
 );
 
 const IMG_BASE = 'https://skydecor.in/';
-const imgSrc = (path) => (path ? `${IMG_BASE}${path}` : '');
+const imgSrc = (path) => {
+  if (!path) return '';
+  return /^https?:\/\//i.test(path) ? path : `${IMG_BASE}${path}`;
+};
 
 const ShowroomDetail = () => {
   const { showroomId } = useParams();
@@ -49,11 +53,33 @@ const ShowroomDetail = () => {
     : '—';
 
   const handleDelete = async () => {
-    if (!window.confirm(`Delete "${showroom.title}"? This cannot be undone.`)) return;
+    const result = await Swal.fire({
+      title: 'Delete showroom?',
+      text: `This will permanently delete "${showroom.title}".`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Confirm',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true,
+      focusCancel: true,
+    });
+
+    if (!result.isConfirmed) return;
+
     setDeleting(true);
     const ok = await deleteShowroom(showroomId);
-    if (ok) navigate('/showrooms');
-    else setDeleting(false);
+    if (ok) {
+      await Swal.fire({
+        title: 'Deleted',
+        text: 'The showroom was deleted successfully.',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+      navigate('/showrooms');
+    } else {
+      setDeleting(false);
+    }
   };
 
   return (

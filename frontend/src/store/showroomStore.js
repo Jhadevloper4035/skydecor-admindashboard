@@ -31,19 +31,13 @@ const useShowroomStore = create(
 
       createShowroom: async (payload) => {
         try {
-          const formData = new FormData();
-          Object.entries(payload).forEach(([key, value]) => {
-            if (key === "images" && Array.isArray(value)) {
-              value.forEach((item) => formData.append("images", item));
-            } else if (value !== null && value !== undefined && value !== "") {
-              formData.append(key, value);
-            }
-          });
-
           const data = await apiFetch("/api/showrooms", {
             method: "POST",
-            headers: { "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET },
-            body: formData,
+            headers: {
+              "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
           });
           const created = data?.data || data;
           set((state) => ({ showrooms: [created, ...state.showrooms] }), false, "createShowroom/success");
@@ -58,25 +52,13 @@ const useShowroomStore = create(
 
       updateShowroom: async (id, payload) => {
         try {
-          const formData = new FormData();
-          Object.entries(payload).forEach(([key, value]) => {
-            if (key === "images" && Array.isArray(value)) {
-              value.forEach((item) => {
-                if (item instanceof File) {
-                  formData.append("images", item);
-                } else {
-                  formData.append("keepImages", item);
-                }
-              });
-            } else if (value !== null && value !== undefined && value !== "") {
-              formData.append(key, value);
-            }
-          });
-
           const data = await apiFetch(`/api/showrooms/${id}`, {
             method: "PUT",
-            headers: { "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET },
-            body: formData,
+            headers: {
+              "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
           });
           const updated = data?.data || data;
           set(

@@ -1,10 +1,16 @@
 
+const rawApiBase =
+  import.meta.env.VITE_API_BASE_URL ||
+  import.meta.env.VITE_API_URL ||
+  "http://localhost:8000";
+
+const API_BASE_URL = rawApiBase.replace(/\/$/, "");
+
 export const apiFetch = async (url, options = {}) => {
-  const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}${url}`,
-    {
-      credentials: "include",
-      ...options,
-    });
+  const res = await fetch(`${API_BASE_URL}${url}`, {
+    credentials: "include",
+    ...options,
+  });
 
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
@@ -12,7 +18,7 @@ export const apiFetch = async (url, options = {}) => {
 };
 
 export const downloadExcel = async (url, filename) => {
-  const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}${url}`, {
+  const res = await fetch(`${API_BASE_URL}${url}`, {
     credentials: "include",
   });
 

@@ -23,7 +23,7 @@ const seoMetaSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
-        maxlength: 70
+        maxlength: 100
     },
     description: {
         type: String,

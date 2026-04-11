@@ -31,17 +31,13 @@ const useBlogStore = create(
 
       createBlog: async (payload) => {
         try {
-          const formData = new FormData();
-          Object.entries(payload).forEach(([key, value]) => {
-            if (value !== null && value !== undefined) {
-              formData.append(key, value);
-            }
-          });
-
           const data = await apiFetch("/api/blog", {
             method: "POST",
-            headers: { "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET },
-            body: formData,
+            headers: {
+              "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
           });
           const created = data?.data || data;
           set(

@@ -1,12 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Badge, Card, CardBody, Col, Row, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import PageBreadcrumb from '@/components/layout/PageBreadcrumb';
 import PageMetaData from '@/components/PageTitle';
 import IconifyIcon from '@/components/wrappers/IconifyIcon';
 import useShowroomStore from '@/store/showroomStore';
 
-const ShowroomCard = ({ showroom }) => {
+const imageSrc = (value) => {
+  if (!value) return '';
+  return /^https?:\/\//i.test(value) ? value : `https://skydecor.in/${value}`;
+};
+
+const ShowroomCard = ({ showroom, onDelete, deleting }) => {
   const dateLabel = showroom.date
     ? new Date(showroom.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
     : '—';
@@ -17,7 +23,7 @@ const ShowroomCard = ({ showroom }) => {
         <div style={{ height: 170, overflow: 'hidden', background: '#f8f9fa' }} className="rounded-top">
           {showroom.coverImage ? (
             <img
-              src={`https://skydecor.in/${showroom.coverImage}`}
+              src={imageSrc(showroom.coverImage)}
               alt={showroom.title}
               className="w-100 h-100"
               style={{ objectFit: 'cover' }}
@@ -68,6 +74,15 @@ const ShowroomCard = ({ showroom }) => {
           >
             <IconifyIcon icon="bx:edit" />
           </Link>
+          <button
+            type="button"
+            className="btn btn-sm btn-soft-danger flex-fill py-1"
+            title="Delete"
+            onClick={() => onDelete(showroom)}
+            disabled={deleting}
+          >
+            {deleting ? <Spinner animation="border" size="sm" /> : <IconifyIcon icon="bx:trash" />}
+          </button>
         </div>
       </Card>
     </Col>
@@ -75,8 +90,9 @@ const ShowroomCard = ({ showroom }) => {
 };
 
 const Showrooms = () => {
-  const { showrooms, loading, fetchShowrooms } = useShowroomStore();
+  const { showrooms, loading, fetchShowrooms, deleteShowroom } = useShowroomStore();
   const [search, setSearch] = useState('');
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     fetchShowrooms();
@@ -97,6 +113,35 @@ const Showrooms = () => {
     () => [...filtered].sort((a, b) => new Date(b.date) - new Date(a.date)),
     [filtered]
   );
+
+  const handleDelete = async (showroom) => {
+    const result = await Swal.fire({
+      title: 'Delete showroom?',
+      text: `This will permanently delete "${showroom.title}".`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Confirm',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true,
+      focusCancel: true,
+    });
+
+    if (!result.isConfirmed) return;
+
+    setDeletingId(showroom._id);
+    const ok = await deleteShowroom(showroom._id);
+    setDeletingId(null);
+
+    if (ok) {
+      await Swal.fire({
+        title: 'Deleted',
+        text: 'The showroom was deleted successfully.',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    }
+  };
 
   return (
     <>
@@ -133,7 +178,12 @@ const Showrooms = () => {
       ) : (
         <Row className="g-3">
           {sorted.map((showroom) => (
-            <ShowroomCard key={showroom._id} showroom={showroom} />
+            <ShowroomCard
+              key={showroom._id}
+              showroom={showroom}
+              onDelete={handleDelete}
+              deleting={deletingId === showroom._id}
+            />
           ))}
         </Row>
       )}

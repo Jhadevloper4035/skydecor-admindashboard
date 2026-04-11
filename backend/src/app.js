@@ -15,13 +15,31 @@ const app = express();
 app.use(helmet());
 
 // ── CORS — allow React dev server + production origin ────────────────────────
+const allowedOrigins = (
+  process.env.ALLOWED_ORIGINS ||
+  process.env.CLIENT_ORIGIN ||
+  "http://localhost:5173"
+)
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
-app.use(
-  cors({
-    origin: "http://localhost:5173", // ✅ single allowed origin
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`Origin ${origin} is not allowed by CORS`));
+  },
+  credentials: true,
+  methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "x-admin-secret"],
+};
+
+// Respond to all OPTIONS preflight requests before any other middleware
+app.options("/{*path}", cors(corsOptions));
+app.use(cors(corsOptions));
 
 
 // ── HTTP request logging ──────────────────────────────────────────────────────

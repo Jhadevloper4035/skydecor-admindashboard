@@ -31,19 +31,13 @@ const useProductStore = create(
 
       createProduct: async (payload) => {
         try {
-          const formData = new FormData();
-          Object.entries(payload).forEach(([key, value]) => {
-            if (key === "images" && Array.isArray(value)) {
-              value.forEach((file) => formData.append("images", file));
-            } else if (value !== null && value !== undefined && value !== "") {
-              formData.append(key, value);
-            }
-          });
-
           const data = await apiFetch("/api/product", {
             method: "POST",
-            headers: { "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET },
-            body: formData,
+            headers: {
+              "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
           });
           const created = data?.data || data;
           set(

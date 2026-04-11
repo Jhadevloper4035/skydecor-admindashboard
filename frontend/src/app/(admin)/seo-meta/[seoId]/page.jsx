@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Badge, Card, CardBody, Col, Row, Spinner } from 'react-bootstrap';
+import Swal from 'sweetalert2';
 import PageBreadcrumb from '@/components/layout/PageBreadcrumb';
 import PageMetaData from '@/components/PageTitle';
 import IconifyIcon from '@/components/wrappers/IconifyIcon';
@@ -30,7 +31,8 @@ const SectionCard = ({ title, children }) => (
 const SeoMetaDetail = () => {
   const { seoId } = useParams();
   const navigate = useNavigate();
-  const { seoMetas, loading, fetchSeoMetas } = useSeoMetaStore();
+  const { seoMetas, loading, fetchSeoMetas, deleteSeoMeta } = useSeoMetaStore();
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     fetchSeoMetas();
@@ -54,6 +56,37 @@ const SeoMetaDetail = () => {
 
   if (!seo) return null;
 
+  const handleDelete = async () => {
+    const result = await Swal.fire({
+      title: 'Delete SEO meta?',
+      text: `This will permanently delete "${seo.pageName}".`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Confirm',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true,
+      focusCancel: true,
+    });
+
+    if (!result.isConfirmed) return;
+
+    setDeleting(true);
+    const ok = await deleteSeoMeta(seoId);
+
+    if (ok) {
+      await Swal.fire({
+        title: 'Deleted',
+        text: 'The SEO meta entry was deleted successfully.',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+      navigate('/seo-meta');
+    } else {
+      setDeleting(false);
+    }
+  };
+
   return (
     <>
       <PageMetaData title={seo.pageName} />
@@ -67,6 +100,15 @@ const SeoMetaDetail = () => {
         <Link to="/seo-meta" className="btn btn-outline-secondary">
           <IconifyIcon icon="bx:arrow-back" className="me-1" />Back to List
         </Link>
+        <button
+          type="button"
+          className="btn btn-danger"
+          onClick={handleDelete}
+          disabled={deleting}
+        >
+          {deleting ? <Spinner animation="border" size="sm" className="me-1" /> : <IconifyIcon icon="bx:trash" className="me-1" />}
+          Delete
+        </button>
         <span className="ms-auto d-flex align-items-center gap-2">
           {seo.isActive ? (
             <Badge bg="success" className="fs-12">Active</Badge>

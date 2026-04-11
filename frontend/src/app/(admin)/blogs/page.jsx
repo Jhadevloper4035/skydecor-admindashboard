@@ -6,13 +6,18 @@ import PageMetaData from '@/components/PageTitle';
 import IconifyIcon from '@/components/wrappers/IconifyIcon';
 import useBlogStore from '@/store/blogStore';
 
+const imageSrc = (value) => {
+  if (!value) return '';
+  return /^https?:\/\//i.test(value) ? value : `https://skydecor.in/${value}`;
+};
+
 const BlogCard = ({ blog }) => (
   <Col xs={12} sm={6} md={4} xl={3}>
     <Card className="h-100 shadow-none border">
       <div style={{ height: 160, overflow: 'hidden', background: '#f8f9fa' }} className="rounded-top">
         {blog.image ? (
           <img
-            src={`https://skydecor.in/${blog.image}`}
+            src={imageSrc(blog.image)}
             alt={blog.title}
             className="w-100 h-100"
             style={{ objectFit: 'cover' }}
