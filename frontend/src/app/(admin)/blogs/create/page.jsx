@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import ReactQuill from 'react-quill-new'
 import 'react-quill-new/dist/quill.snow.css'
+
 import PageBreadcrumb from '@/components/layout/PageBreadcrumb'
 import PageMetaData from '@/components/PageTitle'
 import TextFormInput from '@/components/form/TextFormInput'
@@ -63,9 +64,6 @@ const CreateBlog = () => {
       meta_description: values.meta_description || '',
       image: coverImage,
     }
-
-    console.log('Submitting blog with payload:', payload)
-
 
     const result = await createBlog(payload)
     if (result) navigate('/blogs')

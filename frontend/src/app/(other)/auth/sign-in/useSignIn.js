@@ -5,7 +5,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import * as yup from 'yup';
 import { useAuthContext } from '@/context/useAuthContext';
 import { useNotificationContext } from '@/context/useNotificationContext';
-import httpClient from '@/helpers/httpClient';
+import { apiFetch } from '@/helpers/httpClient';
 const useSignIn = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -36,11 +36,15 @@ const useSignIn = () => {
   };
   const login = handleSubmit(async values => {
     try {
-      const res = await httpClient.post('/login', values);
-      if (res.data.token) {
+      const res = await apiFetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
+      });
+      if (res.token) {
         saveSession({
-          ...(res.data ?? {}),
-          token: res.data.token
+          ...(res ?? {}),
+          token: res.token
         });
         redirectUser();
         showNotification({
@@ -50,12 +54,10 @@ const useSignIn = () => {
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e) {
-      if (e.response?.data?.error) {
-        showNotification({
-          message: e.response?.data?.error,
-          variant: 'danger'
-        });
-      }
+      showNotification({
+        message: e.message ?? 'Login failed. Please try again.',
+        variant: 'danger'
+      });
     } finally {
       setLoading(false);
     }
