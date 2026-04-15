@@ -38,35 +38,14 @@ const protect = async (req, res, next) => {
   }
 };
 
-// ── Access-type guards ────────────────────────────────────────────────────────
-const websiteLeadAccess = (req, res, next) => {
-  if (req.user.accessType === "showroom") {
+// ── Role guard ────────────────────────────────────────────────────────────────
+// Usage: requireRole('admin', 'superadmin')
+const requireRole = (...roles) => (req, res, next) => {
+  if (!roles.includes(req.user.accessType)) {
     return res.status(403).json({
       success: false,
       status: "forbidden",
       message: "Access denied: insufficient permissions.",
-    });
-  }
-  next();
-};
-
-const showroomLeadAccess = (req, res, next) => {
-  if (req.user.accessType === "website") {
-    return res.status(403).json({
-      success: false,
-      status: "forbidden",
-      message: "Access denied: insufficient permissions.",
-    });
-  }
-  next();
-};
-
-const adminLeadAccess = (req, res, next) => {
-  if (req.user.accessType === "showroom" || req.user.accessType === "website") {
-    return res.status(403).json({
-      success: false,
-      status: "forbidden",
-      message: "Access denied: admin or event access required.",
     });
   }
   next();
@@ -75,7 +54,5 @@ const adminLeadAccess = (req, res, next) => {
 module.exports = {
   generateToken,
   protect,
-  websiteLeadAccess,
-  showroomLeadAccess,
-  adminLeadAccess,
+  requireRole,
 };

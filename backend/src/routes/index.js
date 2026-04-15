@@ -14,17 +14,25 @@ const authAdminRoute = require("./auth.routes.js");
 const uploadRoute = require("./upload.route.js");
 const healthRoute = require("./health.route.js");
 
-router.use("/upload", uploadRoute);
-router.use("/health", healthRoute);
+const { protect, requireRole } = require("../middleware/jwt.js");
 
+const adminOnly = [protect, requireRole("admin", "superadmin")];
+
+// Public routes — no auth required
+router.use("/health", healthRoute);
 router.use("/auth", authAdminRoute);
+
+// Lead routes handle their own auth (some endpoints are public form submissions)
 router.use("/lead", leadAdminRoute);
 router.use("/leads", leadAdminRoute);
-router.use("/showrooms", showroomAdminRoute);
-router.use("/qr-code", qrcodeAdminRoute);
-router.use("/seo-meta", seoMetaAdminRoute);
-router.use("/events", eventAdminRoute);
-router.use("/blog", blogAdminRoute);
-router.use("/product", productAdminRoute);
+
+// Protected routes — admin or superadmin only
+router.use("/upload", adminOnly, uploadRoute);
+router.use("/showrooms", adminOnly, showroomAdminRoute);
+router.use("/qr-code", adminOnly, qrcodeAdminRoute);
+router.use("/seo-meta", adminOnly, seoMetaAdminRoute);
+router.use("/events", adminOnly, eventAdminRoute);
+router.use("/blog", adminOnly, blogAdminRoute);
+router.use("/product", adminOnly, productAdminRoute);
 
 module.exports = router;

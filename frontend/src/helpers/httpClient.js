@@ -12,7 +12,14 @@ export const apiFetch = async (url, options = {}) => {
     ...options,
   });
 
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  if (!res.ok) {
+    let message = `HTTP ${res.status}`;
+    try {
+      const body = await res.json();
+      if (body?.message) message = body.message;
+    } catch { /* ignore parse errors */ }
+    throw new Error(message);
+  }
 
   return res.json();
 };

@@ -17,7 +17,7 @@ const useSignIn = () => {
     showNotification
   } = useNotificationContext();
   const loginFormSchema = yup.object({
-    email: yup.string().email('Please enter a valid email').required('Please enter your email'),
+    name: yup.string().required('Please enter your username'),
     password: yup.string().required('Please enter your password')
   });
   const {
@@ -26,8 +26,8 @@ const useSignIn = () => {
   } = useForm({
     resolver: yupResolver(loginFormSchema),
     defaultValues: {
-      email: 'test@techzaa.in',
-      password: 'password'
+      name: '',
+      password: ''
     }
   });
   const redirectUser = () => {
@@ -35,17 +35,15 @@ const useSignIn = () => {
     if (redirectLink) navigate(redirectLink);else navigate('/');
   };
   const login = handleSubmit(async values => {
+    setLoading(true);
     try {
-      const res = await apiFetch('/login', {
+      const res = await apiFetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values),
       });
-      if (res.token) {
-        saveSession({
-          ...(res ?? {}),
-          token: res.token
-        });
+      if (res.success && res.data?.user) {
+        saveSession(res.data.user);
         redirectUser();
         showNotification({
           message: 'Successfully logged in. Redirecting....',

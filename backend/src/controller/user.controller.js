@@ -1,7 +1,7 @@
 const User = require("../model/user.model.js");
 const { generateToken } = require("../middleware/jwt.js");
 
-const VALID_ACCESS_TYPES = ["event", "admin", "showroom", "website"];
+const VALID_ACCESS_TYPES = ["event", "admin", "showroom", "website", "superadmin"];
 
 function cookieOptions() {
   return {
