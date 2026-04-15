@@ -21,31 +21,34 @@ const {
 } = require("../../controller/lead.controller.js");
 
 const { validateEventForm, validateShowroomForm } = require("../../middleware/lead.validation.js");
+const { protect, requireRole } = require("../../middleware/jwt.js");
 
-//get all leads
-router.get("/all-leads", getLeads);
+const adminOnly = [protect, requireRole("admin", "superadmin")];
 
-// seed leads from leads.json into DB (run once)
-router.get("/seed", seedLeads);
-
-
-
-// POST /api/lead/
+// ── Public routes (website form submissions — no auth) ────────────────────────
 router.post("/event/contact-form-submit/:place", validateEventForm, submitFormEvent);
-router.get("/event/:place", getEventLeads);
-router.get("/event/download/:place", downloadEventLeads);
-
 router.post("/showroom/contact-form-submit", validateShowroomForm, submitFormShowroom);
-router.get("/showroom", getShowroomLeads);
-router.get("/showroom/download", downloadShowroomLeads);
-router.get("/contactleads", getEnquiries);
 router.post("/contactleads", createEnquiry);
-router.put("/contactleads/:id", updateEnquiry);
-router.delete("/contactleads/:id", deleteEnquiry);
-router.get("/website/download", downloadWebsiteEnquiries);
-router.get("/productEnquiry", getProductEnquiries);
-router.get("/product-enquiry/download", downloadProductEnquiries);
-router.get("/jobapplications", getJobApplications);
-router.get("/job-application/download", downloadJobApplications);
+
+// ── Admin-only routes ─────────────────────────────────────────────────────────
+router.get("/all-leads", adminOnly, getLeads);
+router.get("/seed", adminOnly, seedLeads);
+
+router.get("/event/:place", adminOnly, getEventLeads);
+router.get("/event/download/:place", adminOnly, downloadEventLeads);
+
+router.get("/showroom", adminOnly, getShowroomLeads);
+router.get("/showroom/download", adminOnly, downloadShowroomLeads);
+
+router.get("/contactleads", adminOnly, getEnquiries);
+router.put("/contactleads/:id", adminOnly, updateEnquiry);
+router.delete("/contactleads/:id", adminOnly, deleteEnquiry);
+router.get("/website/download", adminOnly, downloadWebsiteEnquiries);
+
+router.get("/productEnquiry", adminOnly, getProductEnquiries);
+router.get("/product-enquiry/download", adminOnly, downloadProductEnquiries);
+
+router.get("/jobapplications", adminOnly, getJobApplications);
+router.get("/job-application/download", adminOnly, downloadJobApplications);
 
 module.exports = router;

@@ -11,6 +11,8 @@ ENV NODE_ENV=development
 CMD ["npm", "run", "dev"]
 
 
+
+
 # Production deps
 FROM node:22-alpine AS deps
 WORKDIR /app

@@ -15,25 +15,6 @@ name: skydecor-dev
 
 services:
 
-  # ── MongoDB ─────────────────────────────────────────────────────────────────
-  mongo:
-    image: mongo:7-jammy
-    container_name: skydecor-mongo-dev
-    restart: unless-stopped
-    ports:
-      - "27017:27017"           # expose so you can connect from Compass / Mongosh
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-admin}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASS:-secret}
-      MONGO_INITDB_DATABASE: skydecor
-    volumes:
-      - mongo_dev_data:/data/db
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   # ── Backend ──────────────────────────────────────────────────────────────────
   backend:
     container_name: skydecor-backend-dev
@@ -41,6 +22,9 @@ services:
       context: ./backend
       target: development          # uses the 'development' stage in backend/Dockerfile
     restart: unless-stopped
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     env_file:
       - ./backend/.env.development
     environment:
@@ -49,9 +33,9 @@ services:
       - "8000:8000"
     volumes:
       - ./backend/src:/app/src    # live hot-reload via nodemon
-    depends_on:
-      mongo:
-        condition: service_healthy
+    # depends_on:
+    #   mongo:
+    #     condition: service_healthy
 
   # ── Frontend ─────────────────────────────────────────────────────────────────
   frontend:
@@ -61,7 +45,7 @@ services:
       target: development          # uses the 'development' stage in frontend/Dockerfile
     restart: unless-stopped
     env_file:
-      - ./frontend/.env.development
+      - ./frontend/.env
     environment:
       VITE_API_URL: http://localhost:8000
     ports:
@@ -71,5 +55,3 @@ services:
     depends_on:
       - backend
 
-volumes:
-  mongo_dev_data:

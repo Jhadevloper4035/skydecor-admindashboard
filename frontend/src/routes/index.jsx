@@ -225,11 +225,6 @@ export const authRoutes = [
     element: <AuthSignIn />,
   },
   {
-    name: 'Sign Up',
-    path: '/auth/sign-up',
-    element: <AuthSignUp />,
-  },
-  {
     name: 'Reset Password',
     path: '/auth/reset-pass',
     element: <ResetPassword />,
@@ -246,5 +241,11 @@ export const appRoutes = [
   ...generalRoutes,
   ...appsRoutes,
   ...customRoutes,
+  // Sign-up is admin-only (create a new user) — must be inside protected routes
+  {
+    name: 'Create User',
+    path: '/auth/sign-up',
+    element: <AuthSignUp />,
+  },
   ...authRoutes,
 ]

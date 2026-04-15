@@ -1,5 +1,4 @@
 import { Card, CardBody, Col, Row } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 import LogoBox from '@/components/LogoBox';
 import PageMetaData from '@/components/PageTitle';
 import ThirdPartyAuth from '@/components/ThirdPartyAuth';
@@ -25,8 +24,8 @@ const SignUp = () => {
               }} squareLogo={{
                 className: 'me-1'
               }} containerClassName="mx-auto mb-4 text-center auth-logo" />
-                <h2 className="fw-bold text-center fs-18">Sign Up</h2>
-                <p className="text-muted text-center mt-1 mb-4">New to our platform? Sign up now! It only takes a minute.</p>
+                <h2 className="fw-bold text-center fs-18">Create User</h2>
+                <p className="text-muted text-center mt-1 mb-4">Create a new user account and assign their access level.</p>
                 <Row className="justify-content-center">
                   <Col xs={12} md={8}>
                     <SignUpForm />
@@ -38,12 +37,6 @@ const SignUp = () => {
           </Row>
         </CardBody>
       </Card>
-      <p className="text-white mb-0 text-center">
-        I already have an account
-        <Link to="/auth/sign-in" className="text-white fw-bold ms-1">
-          Sign In
-        </Link>
-      </p>
     </>;
 };
 export default SignUp;
