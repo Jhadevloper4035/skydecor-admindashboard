@@ -27,4 +27,4 @@ COPY src ./src
 COPY package.json ./
 EXPOSE 8000
 ENV NODE_ENV=production
-CMD ["npm", "start"]
+CMD ["src/server.js"]

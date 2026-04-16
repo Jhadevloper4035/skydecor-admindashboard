@@ -1,16 +1,4 @@
 
-# ══════════════════════════════════════════════════════════════════════════════
-#  Development compose
-#
-#  Usage:
-#    docker compose -f docker-compose.dev.yml up --build
-#    docker compose -f docker-compose.dev.yml down -v   # also removes volumes
-#
-#  Env files (create these before first run, never commit them):
-#    backend/.env.development
-#    frontend/.env.development
-# ══════════════════════════════════════════════════════════════════════════════
-
 name: skydecor-dev
 
 services:
@@ -32,10 +20,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend/src:/app/src    # live hot-reload via nodemon
-    # depends_on:
-    #   mongo:
-    #     condition: service_healthy
+      - ./backend/src:/app/src    
 
   # ── Frontend ─────────────────────────────────────────────────────────────────
   frontend:

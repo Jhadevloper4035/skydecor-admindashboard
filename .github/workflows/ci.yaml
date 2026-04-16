@@ -79,7 +79,7 @@ jobs:
 
       - name: Build images
         run: docker compose -f docker-compose.prod.yml build
-
+        
 
       - name: List images
         run: docker images
