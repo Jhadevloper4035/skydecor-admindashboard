@@ -15,19 +15,7 @@ export const MENU_ITEMS = [
         label: 'Analytics',
         url: '/dashboard/analytics',
         parentKey: 'dashboards',
-      },
-      {
-        key: 'dashboard-finance',
-        label: 'Finance',
-        url: '/dashboard/finance',
-        parentKey: 'dashboards',
-      },
-      {
-        key: 'dashboard-sales',
-        label: 'Sales',
-        url: '/dashboard/sales',
-        parentKey: 'dashboards',
-      },
+      }
     ],
   },
 

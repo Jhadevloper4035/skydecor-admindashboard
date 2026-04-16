@@ -29,7 +29,7 @@ router.use("/leads", leadAdminRoute);
 // Protected routes — admin or superadmin only
 router.use("/upload", adminOnly, uploadRoute);
 router.use("/showrooms", adminOnly, showroomAdminRoute);
-router.use("/qr-code", adminOnly, qrcodeAdminRoute);
+router.use("/qr-code",  qrcodeAdminRoute);
 router.use("/seo-meta", adminOnly, seoMetaAdminRoute);
 router.use("/events", adminOnly, eventAdminRoute);
 router.use("/blog", adminOnly, blogAdminRoute);

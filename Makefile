@@ -57,7 +57,7 @@ dev:
 
 .PHONY: dev-up
 dev-up:
-	docker compose -f $(DEV_FILE) up
+	docker compose -f docker-compose.dev.yml up
 
 .PHONY: dev-down
 dev-down:
