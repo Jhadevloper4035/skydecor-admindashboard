@@ -84,22 +84,16 @@ jobs:
       - name: List images
         run: docker images
 
+      - name: Tag & push backend
+        run: |
+          docker tag skydecor-prod-backend ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
+          docker tag skydecor-prod-backend ${{ env.BACKEND_IMAGE }}:latest
+          docker push ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
+          docker push ${{ env.BACKEND_IMAGE }}:latest
 
-
-
-
-
-
-      # - name: Tag & push backend
-      #   run: |
-      #     docker tag skydecor-prod-backend ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
-      #     docker tag skydecor-prod-backend ${{ env.BACKEND_IMAGE }}:latest
-      #     docker push ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
-      #     docker push ${{ env.BACKEND_IMAGE }}:latest
-
-      # - name: Tag & push frontend
-      #   run: |
-      #     docker tag skydecor-prod-frontend ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
-      #     docker tag skydecor-prod-frontend ${{ env.FRONTEND_IMAGE }}:latest
-      #     docker push ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
-      #     docker push ${{ env.FRONTEND_IMAGE }}:latest
+      - name: Tag & push frontend
+        run: |
+          docker tag skydecor-prod-frontend ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
+          docker tag skydecor-prod-frontend ${{ env.FRONTEND_IMAGE }}:latest
+          docker push ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
+          docker push ${{ env.FRONTEND_IMAGE }}:latest
