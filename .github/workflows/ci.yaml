@@ -10,8 +10,20 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-
       - name: "Setup Node.js"
         uses: actions/setup-node@v6
         with:
           node-version: "24"
+
+      - name: "Check node js version"
+        run: |
+          node --version
+          npm --version
+
+      - name: "Checkout code"
+        uses: actions/checkout@v3
+
+      - name: "Install dependencies"
+        run: |
+          cd backend
+          npm install
