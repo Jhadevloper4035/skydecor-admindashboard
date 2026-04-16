@@ -40,8 +40,10 @@ RUN npm run build
 # Unprivileged nginx listens on port 8080 instead of 80.
 FROM nginxinc/nginx-unprivileged:alpine AS production
 
-# Patch any remaining Alpine OS packages
+# Patch any remaining Alpine OS packages (must be root; switch back after)
+USER root
 RUN apk update && apk upgrade --no-cache
+USER 101
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
