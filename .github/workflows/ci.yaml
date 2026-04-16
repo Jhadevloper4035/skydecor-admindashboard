@@ -1,4 +1,4 @@
-name: Build & Deploy Skydecor Admin Dashboard
+name: CI
 
 on:
   push:
@@ -6,27 +6,100 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  BACKEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/skydecor-backend
+  FRONTEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/skydecor-frontend
+
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: "Setup Node.js"
-        uses: actions/setup-node@v6
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: "24"
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
 
-      - name: "Check node js version"
+      - name: Install backend dependencies
+        run: npm ci
+        working-directory: backend
+
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Build frontend
+        run: npm run build
+        working-directory: frontend
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Create backend .env.production
         run: |
-          node --version
-          npm --version
+          cat > backend/.env.production << EOF
+          PORT=8000
+          NODE_ENV=production
+          DATABASE_URL=${{ secrets.BACKEND_DB_URL }}
+          DBNAME=${{ secrets.BACKEND_DBNAME }}
+          JWT_SECRET=${{ secrets.BACKEND_JWT_SECRET }}
+          ALLOWED_ORIGINS=${{ secrets.ALLOWED_ORIGINS }}
+          API_ENDPOINT=${{ secrets.API_ENDPOINT }}
+          ADMIN_SECRET=${{ secrets.BACKEND_ADMIN_SECRET }}
+          AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION=${{ secrets.AWS_REGION }}
+          S3_BUCKET=${{ secrets.S3_BUCKET }}
+          EOF
 
-      - name: "Checkout code"
-        uses: actions/checkout@v3
-
-      - name: "Install dependencies"
+      - name: Create frontend .env
         run: |
-          cd backend
-          npm install
-          cd ..
-          cd frontend
-          npm install
+          cat > frontend/.env << EOF
+          VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}
+          VITE_WEBSITE_BASE_URL=${{ secrets.VITE_WEBSITE_BASE_URL }}
+          VITE_ADMIN_SECRET=${{ secrets.VITE_ADMIN_SECRET }}
+          EOF
+
+      - name: Build images
+        run: docker compose -f docker-compose.prod.yml build
+
+
+      - name: List images
+        run: docker images
+
+
+
+
+
+
+
+      # - name: Tag & push backend
+      #   run: |
+      #     docker tag skydecor-prod-backend ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
+      #     docker tag skydecor-prod-backend ${{ env.BACKEND_IMAGE }}:latest
+      #     docker push ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
+      #     docker push ${{ env.BACKEND_IMAGE }}:latest
+
+      # - name: Tag & push frontend
+      #   run: |
+      #     docker tag skydecor-prod-frontend ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
+      #     docker tag skydecor-prod-frontend ${{ env.FRONTEND_IMAGE }}:latest
+      #     docker push ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
+      #     docker push ${{ env.FRONTEND_IMAGE }}:latest
