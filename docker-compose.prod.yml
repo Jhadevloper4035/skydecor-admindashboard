@@ -5,6 +5,7 @@ services:
   # ── Backend ──────────────────────────────────────────────────────────────────
   backend:
     container_name: skydecor-backend
+    image: ${DOCKERHUB_USERNAME}/skydecor-backend:latest
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -24,6 +25,7 @@ services:
   # conflict with Nginx on the EC2 host which occupies port 80.
   frontend:
     container_name: skydecor-frontend
+    image: ${DOCKERHUB_USERNAME}/skydecor-frontend:latest
     build:
       context: ./frontend
       dockerfile: Dockerfile

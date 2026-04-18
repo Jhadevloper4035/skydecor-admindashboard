@@ -104,33 +104,58 @@ jobs:
     steps:
       - name: Deploy to EC2 via SSH
         uses: appleboy/ssh-action@v1.2.0
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          BACKEND_DB_URL: ${{ secrets.BACKEND_DB_URL }}
+          BACKEND_DBNAME: ${{ secrets.BACKEND_DBNAME }}
+          BACKEND_JWT_SECRET: ${{ secrets.BACKEND_JWT_SECRET }}
+          ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+          API_ENDPOINT: ${{ secrets.API_ENDPOINT }}
+          BACKEND_ADMIN_SECRET: ${{ secrets.BACKEND_ADMIN_SECRET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          envs: DOCKERHUB_USERNAME,DOCKERHUB_TOKEN,BACKEND_DB_URL,BACKEND_DBNAME,BACKEND_JWT_SECRET,ALLOWED_ORIGINS,API_ENDPOINT,BACKEND_ADMIN_SECRET,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_REGION,S3_BUCKET
           script: |
             set -e
             cd /opt/admindashboard
 
-            # 1. Pull latest code
+            # 1. Pull latest code (docker-compose.prod.yml changes only)
             git pull origin main
 
-            # 2. Stop running containers
-            docker compose -f docker-compose.prod.yml stop
+            # 2. Write backend runtime env from CI secrets (no localhost values)
+            cat > backend/.env.production << EOF
+            PORT=8000
+            NODE_ENV=production
+            DATABASE_URL=$BACKEND_DB_URL
+            DBNAME=$BACKEND_DBNAME
+            JWT_SECRET=$BACKEND_JWT_SECRET
+            ALLOWED_ORIGINS=$ALLOWED_ORIGINS
+            API_ENDPOINT=$API_ENDPOINT
+            ADMIN_SECRET=$BACKEND_ADMIN_SECRET
+            AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+            AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+            AWS_REGION=$AWS_REGION
+            S3_BUCKET=$S3_BUCKET
+            EOF
 
-            # 3. Remove containers (not volumes)
-            docker compose -f docker-compose.prod.yml rm -f
+            # 3. Login to DockerHub and pull pre-built images (built with secrets on GitHub runner)
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            DOCKERHUB_USERNAME=$DOCKERHUB_USERNAME docker compose -f docker-compose.prod.yml pull
 
-            # 4. Rebuild images on EC2
-            docker compose -f docker-compose.prod.yml build --no-cache
+            # 4. Restart containers from pulled images — no rebuild
+            docker compose -f docker-compose.prod.yml up -d --no-build
 
-            # 5. Start fresh containers
-            docker compose -f docker-compose.prod.yml up -d
-
-            # 6. Remove dangling images to free disk space
+            # 5. Remove dangling images to free disk space
             docker image prune -f
 
-            # 7. Post-deploy smoke test
+            # 6. Post-deploy smoke test
             sleep 5
             curl -sf http://localhost:8000/health | grep -q '"server":"ok"' \
               || (echo "Backend health check failed" && exit 1)
