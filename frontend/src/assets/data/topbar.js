@@ -72,7 +72,7 @@ export const activityStreamData = [{
   status: 'completed',
   time: addOrSubtractDaysFromDate(1)
 }, {
-  title: 'Reback Application UI v2.0.0',
+  title: 'Skydecor Admin Dashboard v2.0.0',
   variant: 'primary',
   content: 'Get access to over 20+ pages including a dashboard layout, charts, kanban board, calendar, and pre-order E-commerce & Marketing pages.',
   files: [{
