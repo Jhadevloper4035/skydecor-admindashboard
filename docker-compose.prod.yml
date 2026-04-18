@@ -15,8 +15,8 @@ services:
       - ./backend/.env.production
     environment:
       NODE_ENV: production
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     networks:
       - skydecor-net
 

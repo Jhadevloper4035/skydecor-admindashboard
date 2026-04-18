@@ -17,10 +17,12 @@ services:
       - ./backend/.env.development
     environment:
       NODE_ENV: development
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     volumes:
-      - ./backend/src:/app/src    
+      - ./backend/src:/app/src
+    networks:
+      - skydecor-dev-net
 
   # ── Frontend ─────────────────────────────────────────────────────────────────
   frontend:
@@ -31,12 +33,16 @@ services:
     restart: unless-stopped
     env_file:
       - ./frontend/.env
-    environment:
-      VITE_API_URL: http://localhost:8000
     ports:
       - "5173:5173"               # Vite default dev port
     volumes:
       - ./frontend/src:/app/src   # live HMR
     depends_on:
       - backend
+    networks:
+      - skydecor-dev-net
+
+networks:
+  skydecor-dev-net:
+    driver: bridge
 

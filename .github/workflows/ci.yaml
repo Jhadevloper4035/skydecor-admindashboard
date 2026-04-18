@@ -82,13 +82,13 @@ jobs:
             "S3_BUCKET=${{ secrets.S3_BUCKET }}" \
             > backend/.env.production
 
-      - name: Create frontend .env (Vite bakes these into the bundle at build time)
+      - name: Create frontend .env.production (Vite bakes these into the bundle at build time)
         run: |
           printf '%s\n' \
             "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}" \
             "VITE_WEBSITE_BASE_URL=${{ secrets.VITE_WEBSITE_BASE_URL }}" \
             "VITE_ADMIN_SECRET=${{ secrets.VITE_ADMIN_SECRET }}" \
-            > frontend/.env
+            > frontend/.env.production
 
       - name: Build images via docker-compose.prod.yml
         run: docker compose -f docker-compose.prod.yml build
@@ -178,7 +178,7 @@ jobs:
             # FIX 3: Smoke test — fail the pipeline if containers are unhealthy
             #         Gives containers 5s to fully start before checking
             sleep 5
-            curl -sf http://localhost:8000/api/health | grep -q '"server":"ok"' \
+            curl -sf http://localhost:3001/api/health | grep -q '"server":"ok"' \
               || (echo "FAILED: Backend health check" && exit 1)
             curl -sf http://localhost:3001 | grep -q "<html" \
               || (echo "FAILED: Frontend health check" && exit 1)

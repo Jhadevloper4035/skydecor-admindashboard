@@ -9,5 +9,13 @@ export default defineConfig({
     alias: {
       "@": resolve(__dirname, "src")
     }
+  },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://backend:8000',
+        changeOrigin: true,
+      }
+    }
   }
 });
