@@ -86,7 +86,7 @@ prod:
 
 .PHONY: prod-up
 prod-up:
-	docker compose -f $(PROD_FILE) up -d
+	docker compose -f $(PROD_FILE) up 
 
 .PHONY: prod-down
 prod-down:

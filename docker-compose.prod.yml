@@ -4,29 +4,38 @@ services:
 
   # ── Backend ──────────────────────────────────────────────────────────────────
   backend:
-    container_name: skydecor-backend-prod
-    image: ${DOCKERHUB_USERNAME:?DOCKERHUB_USERNAME is not set}/skydecor-backend:latest
+    container_name: skydecor-backend
     build:
       context: ./backend
+      dockerfile: Dockerfile
       target: production
-    restart: always
+    restart: unless-stopped
     env_file:
       - ./backend/.env.production
     environment:
       NODE_ENV: production
     ports:
       - "8000:8000"
-
+    networks:
+      - skydecor-net
 
   # ── Frontend ─────────────────────────────────────────────────────────────────
+  # nginx-unprivileged serves on port 8080 internally; host port 3001 avoids
+  # conflict with Nginx on the EC2 host which occupies port 80.
   frontend:
-    container_name: skydecor-frontend-prod
-    image: ${DOCKERHUB_USERNAME:?DOCKERHUB_USERNAME is not set}/skydecor-frontend:latest
+    container_name: skydecor-frontend
     build:
       context: ./frontend
+      dockerfile: Dockerfile
       target: production
-    restart: always
+    restart: unless-stopped
     depends_on:
       - backend
     ports:
-      - "80:8080"
+      - "3001:8080"
+    networks:
+      - skydecor-net
+
+networks:
+  skydecor-net:
+    driver: bridge
