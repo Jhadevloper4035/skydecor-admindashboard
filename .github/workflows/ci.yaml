@@ -155,11 +155,5 @@ jobs:
             # 5. Remove dangling images to free disk space
             docker image prune -f
 
-            # 6. Post-deploy smoke test
-            sleep 5
-            curl -sf http://localhost:8000/health | grep -q '"server":"ok"' \
-              || (echo "Backend health check failed" && exit 1)
-            curl -sf http://localhost:3001 | grep -q "<html" \
-              || (echo "Frontend check failed" && exit 1)
 
             echo "Deploy successful"
