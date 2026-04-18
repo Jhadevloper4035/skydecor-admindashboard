@@ -11,10 +11,12 @@ env:
   FRONTEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/skydecor-frontend
 
 jobs:
+  
   # ─────────────────────────────────────────────────────────────────
   # JOB 1: Build — runs on every push & PR
   # Gate: if this fails, docker + deploy jobs are skipped
   # ─────────────────────────────────────────────────────────────────
+
   build:
     runs-on: ubuntu-latest
     steps:
