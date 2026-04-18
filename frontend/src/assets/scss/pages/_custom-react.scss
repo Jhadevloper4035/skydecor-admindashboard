@@ -28,3 +28,16 @@
 .email-offcanvas {
   --#{$prefix}offcanvas-width: 780px;
 }
+
+.account-pages .auth-card:after{
+  display: none !important;
+}
+
+.account-pages .auth-card::before{
+  display: none !important;
+}
+
+.authentication-bg {
+    background: url(/src/assets/images/bg-overlay.svg) #282f36;
+    padding-bottom: 0;
+}

@@ -32,8 +32,6 @@ const SignIn = () => {
                 <Row className="justify-content-center">
                   <Col xs={12} md={8}>
                     <LoginForm />
-
-                    <ThirdPartyAuth />
                   </Col>
                 </Row>
               </div>
@@ -41,12 +39,7 @@ const SignIn = () => {
           </Row>
         </CardBody>
       </Card>
-      <p className="text-white mb-0 text-center">
-        Don&apos;t have an account?
-        <Link to="/auth/sign-up" className="text-white fw-bold ms-1">
-          Sign Up
-        </Link>
-      </p>
+     
     </>;
 };
 export default SignIn;
