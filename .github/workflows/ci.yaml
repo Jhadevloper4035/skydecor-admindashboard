@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 env:
   BACKEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/skydecor-backend
@@ -81,7 +81,6 @@ jobs:
 
       - name: Build images
         run: docker compose -f docker-compose.prod.yml build
-        
 
       - name: List images
         run: docker images
@@ -116,16 +115,16 @@ jobs:
           docker run -d --name smoke-backend \
             -e PORT=8000 \
             -e NODE_ENV=production \
-            -e DATABASE_URL=mongodb://localhost/test \
-            -e DBNAME=test \
-            -e JWT_SECRET=test-secret \
-            -e ALLOWED_ORIGINS=http://localhost \
-            -e API_ENDPOINT=http://localhost \
-            -e ADMIN_SECRET=test-secret \
-            -e AWS_ACCESS_KEY_ID=test \
-            -e AWS_SECRET_ACCESS_KEY=test \
-            -e AWS_REGION=us-east-1 \
-            -e S3_BUCKET=test-bucket \
+            -e DATABASE_URL=${{ secrets.BACKEND_DB_URL }} \
+            -e DBNAME=${{ secrets.BACKEND_DBNAME }} \
+            -e JWT_SECRET=${{ secrets.BACKEND_JWT_SECRET }} \
+            -e ALLOWED_ORIGINS=${{ secrets.ALLOWED_ORIGINS }} \
+            -e API_ENDPOINT=${{ secrets.API_ENDPOINT }} \
+            -e ADMIN_SECRET=${{ secrets.BACKEND_ADMIN_SECRET }} \
+            -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
+            -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+            -e AWS_REGION=${{ secrets.AWS_REGION }} \
+            -e S3_BUCKET=${{ secrets.S3_BUCKET }} \
             -p 8000:8000 \
             ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
 
@@ -177,7 +176,7 @@ jobs:
           envs: DOCKERHUB_USERNAME
           script: |
             set -e
-            cd /opt/skydecor/india/admindashboard
+            cd /opt/admindashboard
 
             # Pull latest code (compose file updates, nginx config, etc.)
             git pull origin main
