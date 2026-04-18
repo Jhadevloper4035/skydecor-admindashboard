@@ -5,9 +5,10 @@ services:
   # ── Backend ──────────────────────────────────────────────────────────────────
   backend:
     container_name: skydecor-backend-prod
+    image: ${DOCKERHUB_USERNAME}/skydecor-backend:latest
     build:
       context: ./backend
-      target: production           
+      target: production
     restart: always
     env_file:
       - ./backend/.env.production
@@ -20,11 +21,12 @@ services:
   # ── Frontend ─────────────────────────────────────────────────────────────────
   frontend:
     container_name: skydecor-frontend-prod
+    image: ${DOCKERHUB_USERNAME}/skydecor-frontend:latest
     build:
       context: ./frontend
-      target: production          
+      target: production
     restart: always
     env_file:
       - ./frontend/.env
     ports:
-      - "80:8080" 
+      - "80:8080"
