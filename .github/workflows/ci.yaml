@@ -11,7 +11,7 @@ env:
   FRONTEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/skydecor-frontend
 
 jobs:
-  
+
   # ─────────────────────────────────────────────────────────────────
   # JOB 1: Build — runs on every push & PR
   # Gate: if this fails, docker + deploy jobs are skipped
@@ -48,6 +48,7 @@ jobs:
   # JOB 2: Docker — builds images on GitHub runner & pushes to Hub
   # Only runs on push to main (not PRs)
   # ─────────────────────────────────────────────────────────────────
+
   docker:
     runs-on: ubuntu-latest
     needs: build
@@ -110,6 +111,7 @@ jobs:
   # FIX 2: docker compose down before up (forces container recreation)
   # FIX 3: health checks restored after deploy
   # ─────────────────────────────────────────────────────────────────
+  
   deploy:
     runs-on: ubuntu-latest
     needs: docker
