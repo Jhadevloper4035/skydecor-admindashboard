@@ -64,28 +64,28 @@ jobs:
 
       - name: Create backend .env.production (for image build)
         run: |
-          cat > backend/.env.production << EOF
-          PORT=8000
-          NODE_ENV=production
-          DATABASE_URL=${{ secrets.BACKEND_DB_URL }}
-          DBNAME=${{ secrets.BACKEND_DBNAME }}
-          JWT_SECRET=${{ secrets.BACKEND_JWT_SECRET }}
-          ALLOWED_ORIGINS=${{ secrets.ALLOWED_ORIGINS }}
-          API_ENDPOINT=${{ secrets.API_ENDPOINT }}
-          ADMIN_SECRET=${{ secrets.BACKEND_ADMIN_SECRET }}
-          AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION=${{ secrets.AWS_REGION }}
-          S3_BUCKET=${{ secrets.S3_BUCKET }}
-          EOF
+          printf '%s\n' \
+            "PORT=8000" \
+            "NODE_ENV=production" \
+            "DATABASE_URL=${{ secrets.DATABASE_URL }}" \
+            "DBNAME=${{ secrets.DBNAME }}" \
+            "JWT_SECRET=${{ secrets.JWT_SECRET }}" \
+            "ALLOWED_ORIGINS=${{ secrets.ALLOWED_ORIGINS }}" \
+            "API_ENDPOINT=${{ secrets.API_ENDPOINT }}" \
+            "ADMIN_SECRET=${{ secrets.ADMIN_SECRET }}" \
+            "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" \
+            "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
+            "AWS_REGION=${{ secrets.AWS_REGION }}" \
+            "S3_BUCKET=${{ secrets.S3_BUCKET }}" \
+            > backend/.env.production
 
       - name: Create frontend .env (Vite bakes these into the bundle at build time)
         run: |
-          cat > frontend/.env << EOF
-          VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}
-          VITE_WEBSITE_BASE_URL=${{ secrets.VITE_WEBSITE_BASE_URL }}
-          VITE_ADMIN_SECRET=${{ secrets.VITE_ADMIN_SECRET }}
-          EOF
+          printf '%s\n' \
+            "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}" \
+            "VITE_WEBSITE_BASE_URL=${{ secrets.VITE_WEBSITE_BASE_URL }}" \
+            "VITE_ADMIN_SECRET=${{ secrets.VITE_ADMIN_SECRET }}" \
+            > frontend/.env
 
       - name: Build images via docker-compose.prod.yml
         run: docker compose -f docker-compose.prod.yml build
@@ -117,12 +117,12 @@ jobs:
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-          BACKEND_DB_URL: ${{ secrets.BACKEND_DB_URL }}
-          BACKEND_DBNAME: ${{ secrets.BACKEND_DBNAME }}
-          BACKEND_JWT_SECRET: ${{ secrets.BACKEND_JWT_SECRET }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DBNAME: ${{ secrets.DBNAME }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
           ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
           API_ENDPOINT: ${{ secrets.API_ENDPOINT }}
-          BACKEND_ADMIN_SECRET: ${{ secrets.BACKEND_ADMIN_SECRET }}
+          ADMIN_SECRET: ${{ secrets.ADMIN_SECRET }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
@@ -131,7 +131,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: DOCKERHUB_USERNAME,DOCKERHUB_TOKEN,BACKEND_DB_URL,BACKEND_DBNAME,BACKEND_JWT_SECRET,ALLOWED_ORIGINS,API_ENDPOINT,BACKEND_ADMIN_SECRET,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_REGION,S3_BUCKET
+          envs: DOCKERHUB_USERNAME,DOCKERHUB_TOKEN,DATABASE_URL,DBNAME,JWT_SECRET,ALLOWED_ORIGINS,API_ENDPOINT,ADMIN_SECRET,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_REGION,S3_BUCKET
           script: |
             set -e
             cd /opt/admindashboard
@@ -141,20 +141,20 @@ jobs:
 
             # 2. Write backend runtime .env from CI-injected secrets
             #    (never stored in repo, written fresh on every deploy)
-            cat > backend/.env.production << EOF
-            PORT=8000
-            NODE_ENV=production
-            DATABASE_URL=$BACKEND_DB_URL
-            DBNAME=$BACKEND_DBNAME
-            JWT_SECRET=$BACKEND_JWT_SECRET
-            ALLOWED_ORIGINS=$ALLOWED_ORIGINS
-            API_ENDPOINT=$API_ENDPOINT
-            ADMIN_SECRET=$BACKEND_ADMIN_SECRET
-            AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-            AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-            AWS_REGION=$AWS_REGION
-            S3_BUCKET=$S3_BUCKET
-            EOF
+            printf '%s\n' \
+              "PORT=8000" \
+              "NODE_ENV=production" \
+              "DATABASE_URL=$DATABASE_URL" \
+              "DBNAME=$DBNAME" \
+              "JWT_SECRET=$JWT_SECRET" \
+              "ALLOWED_ORIGINS=$ALLOWED_ORIGINS" \
+              "API_ENDPOINT=$API_ENDPOINT" \
+              "ADMIN_SECRET=$ADMIN_SECRET" \
+              "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" \
+              "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" \
+              "AWS_REGION=$AWS_REGION" \
+              "S3_BUCKET=$S3_BUCKET" \
+              > backend/.env.production
 
             # 3. Login to Docker Hub and pull pre-built images
             #    (images were built with secrets on GitHub runner — no rebuild here)
