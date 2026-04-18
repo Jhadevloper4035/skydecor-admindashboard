@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import PageBreadcrumb from '@/components/layout/PageBreadcrumb'
 import PageMetaData from '@/components/PageTitle'
 import useShowroomLeadsStore from '@/store/showroomLeadsStore'
 import ShowroomLeadsTable from './components/ShowroomLeadsTable'
 import { Col, Row, Button } from 'react-bootstrap'
 import { StatCard } from '../dashboard/analytics/components/Stats'
-import { apiFetch, downloadExcel } from '@/helpers/httpClient'
+import { downloadExcel } from '@/helpers/httpClient'
 
 
 const ShowroomLeads = () => {
+  const navigate = useNavigate()
   const { leads, fetchLeads } = useShowroomLeadsStore()
 
   useEffect(() => {
@@ -54,38 +56,6 @@ const ShowroomLeads = () => {
     }
   }
 
-  const handleAddNewLead = async () => {
-    const fullName = window.prompt('Enter lead full name:', 'New Lead')
-    const mobileNumber = window.prompt('Enter mobile number:', '9999999999')
-    if (!fullName || !mobileNumber) return
-
-    const userType = window.prompt('Enter user type:', 'End Customer') || 'Unknown'
-    const email = window.prompt('Enter email:', 'example@example.com') || ''
-
-    try {
-      await apiFetch('/api/lead/showroom/contact-form-submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fullName,
-          email,
-          mobileNumber,
-          userType,
-          productType: ['New Lead'],
-          companyName: '',
-          city: '',
-          state: '',
-          representative: '',
-        }),
-      })
-
-      await fetchLeads(true)
-      window.alert('New showroom lead added successfully.')
-    } catch (err) {
-      window.alert(err.message || 'Failed to add new lead')
-    }
-  }
-
   return (
     <>
       <PageBreadcrumb subName="Pages" title="Showroom Leads" />
@@ -104,10 +74,16 @@ const ShowroomLeads = () => {
 
 
       <Row className="mb-4 justify-content-end">
-        <Col xs="auto">
-          <Button variant="primary" className="me-2" onClick={handleAddNewLead}>
+        <Col xs="auto" className="d-flex gap-2 flex-wrap">
+          <Button
+            variant="outline-info"
+            href="/showroom-lead"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Add New Lead
           </Button>
+         
           <Button variant="success" onClick={handleDownloadExcel} disabled={downloading}>
             {downloading && <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" />}
             {downloading ? 'Preparing...' : 'Download Excel'}

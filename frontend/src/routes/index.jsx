@@ -2,6 +2,10 @@
 import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
 
+// Public Routes
+const ShowroomLeadForm = lazy(() => import('@/app/(public)/showroom-lead/page'))
+const ThankYou = lazy(() => import('@/app/(public)/thank-you/page'))
+
 // Dashboard Routes
 const Analytics = lazy(() => import('@/app/(admin)/dashboard/analytics/page'))
 const Finance = lazy(() => import('@/app/(admin)/dashboard/finance/page'))
@@ -39,11 +43,15 @@ const BlogEdit = lazy(() => import('@/app/(admin)/blogs/[blogId]/edit/page'))
 
 // Leads Routes
 const ShowroomLeads = lazy(() => import('@/app/(admin)/showroom-leads/page'))
+const AddShowroomLead = lazy(() => import('@/app/(admin)/showroom-leads/add/page'))
 const EventLeads = lazy(() => import('@/app/(admin)/pages/event-leads/page'))
 const WebsiteLeads = lazy(() => import('@/app/(admin)/pages/website-leads/page'))
 const ProductEnquiries = lazy(() => import('@/app/(admin)/pages/product-enquiries/page'))
 const JobApplications = lazy(() => import('@/app/(admin)/pages/job-applications/page'))
 const QrCodes = lazy(() => import('@/app/(admin)/pages/qr-codes/page'))
+
+// User Management
+const UserManagement = lazy(() => import('@/app/(admin)/users/page'))
 
 // Auth & Error Routes
 const AuthSignIn = lazy(() => import('@/app/(other)/auth/sign-in/page'))
@@ -63,6 +71,14 @@ const initialRoutes = [
     element: <NotFound />,
   },
 ]
+
+// All valid access types — used to gate entry into the admin layout
+export const ALL_ACCESS_TYPES = ['event', 'admin', 'showroom', 'website', 'superadmin', 'sales']
+
+// superadmin : all routes
+// admin      : all routes except user creation
+// website    : dashboard + website-related leads (website leads, product enquiries, job apps, QR codes)
+// event      : dashboard + event leads + showroom leads
 
 const generalRoutes = [
   {
@@ -87,21 +103,25 @@ const appsRoutes = [
     name: 'Product Details',
     path: '/ecommerce/products/:productId',
     element: <EcommerceProductDetails />,
+    roles: ['admin', 'superadmin'],
   },
   {
     name: 'Create Product',
     path: '/ecommerce/products/create',
     element: <EcommerceProductCreate />,
+    roles: ['admin', 'superadmin'],
   },
   {
     name: 'Edit Product',
     path: '/ecommerce/products/:productId/edit',
     element: <EcommerceProductEdit />,
+    roles: ['admin', 'superadmin'],
   },
   {
     name: 'Inventory',
     path: '/ecommerce/inventory',
     element: <EcommerceInventory />,
+    roles: ['admin', 'superadmin'],
   },
 ]
 
@@ -110,111 +130,139 @@ const customRoutes = [
     name: 'Events',
     path: '/events',
     element: <Events />,
+    roles: ['admin', 'superadmin'],
   },
   {
     name: 'Event Create',
     path: '/events/create',
     element: <EventCreate />,
+    roles: ['admin', 'superadmin'],
   },
   {
     name: 'Event Detail',
     path: '/events/:eventId',
     element: <EventDetail />,
+    roles: ['admin', 'superadmin'],
   },
   {
     name: 'Event Edit',
     path: '/events/:eventId/edit',
     element: <EventEdit />,
+    roles: ['admin', 'superadmin'],
   },
   {
     name: 'Blogs',
     path: '/blogs',
     element: <Blogs />,
+    roles: ['admin', 'superadmin'],
   },
   {
     name: 'Blog Create',
     path: '/blogs/create',
     element: <BlogCreate />,
+    roles: ['admin', 'superadmin'],
   },
   {
     name: 'Blog Detail',
     path: '/blogs/:blogId',
     element: <BlogDetail />,
+    roles: ['admin', 'superadmin'],
   },
   {
     name: 'Blog Edit',
     path: '/blogs/:blogId/edit',
     element: <BlogEdit />,
+    roles: ['admin', 'superadmin'],
   },
   {
     name: 'SEO Meta List',
     path: '/seo-meta',
     element: <SeoMetaList />,
+    roles: ['admin', 'superadmin'],
   },
   {
     name: 'SEO Meta Create',
     path: '/seo-meta/create',
     element: <SeoMetaCreate />,
+    roles: ['admin', 'superadmin'],
   },
   {
     name: 'SEO Meta Detail',
     path: '/seo-meta/:seoId',
     element: <SeoMetaDetail />,
+    roles: ['admin', 'superadmin'],
   },
   {
     name: 'SEO Meta Edit',
     path: '/seo-meta/:seoId/edit',
     element: <SeoMetaEdit />,
+    roles: ['admin', 'superadmin'],
   },
   {
     name: 'Showrooms',
     path: '/showrooms',
     element: <Showrooms />,
+    roles: ['admin', 'superadmin'],
   },
   {
     name: 'Showroom Create',
     path: '/showrooms/create',
     element: <ShowroomCreate />,
+    roles: ['admin', 'superadmin'],
   },
   {
     name: 'Showroom Detail',
     path: '/showrooms/:showroomId',
     element: <ShowroomDetail />,
+    roles: ['admin', 'superadmin'],
   },
   {
     name: 'Showroom Edit',
     path: '/showrooms/:showroomId/edit',
     element: <ShowroomEdit />,
+    roles: ['admin', 'superadmin'],
   },
   {
     name: 'Showroom Leads',
     path: '/showroom-leads',
     element: <ShowroomLeads />,
+    roles: ['admin', 'superadmin', 'event'],
+  },
+  {
+    name: 'Add Showroom Lead',
+    path: '/showroom-leads/add',
+    element: <AddShowroomLead />,
+    roles: ['admin', 'superadmin', 'event'],
   },
   {
     name: 'Website Leads',
     path: '/pages/website-leads',
     element: <WebsiteLeads />,
+    roles: ['admin', 'superadmin', 'website', 'sales'],
   },
   {
     name: 'Product Enquiries',
     path: '/pages/product-enquiries',
     element: <ProductEnquiries />,
+    roles: ['admin', 'superadmin', 'website', 'sales'],
   },
   {
     name: 'Job Applications',
     path: '/pages/job-applications',
     element: <JobApplications />,
+    roles: ['admin', 'superadmin', 'website', 'sales'],
   },
   {
     name: 'QR Codes',
     path: '/pages/qr-codes',
     element: <QrCodes />,
+    roles: ['admin', 'superadmin', 'website', 'sales'],
   },
   {
     name: 'Event Leads',
     path: '/pages/event-leads/:eventSlug',
     element: <EventLeads />,
+    roles: ['admin', 'superadmin', 'event'],
   },
 ]
 
@@ -241,11 +289,32 @@ export const appRoutes = [
   ...generalRoutes,
   ...appsRoutes,
   ...customRoutes,
-  // Sign-up is admin-only (create a new user) — must be inside protected routes
+  // User management — superadmin only
+  {
+    name: 'User Management',
+    path: '/users',
+    element: <UserManagement />,
+    roles: ['superadmin'],
+  },
   {
     name: 'Create User',
     path: '/auth/sign-up',
     element: <AuthSignUp />,
+    roles: ['superadmin'],
   },
   ...authRoutes,
+]
+
+// Public routes — no auth, no admin layout
+export const publicRoutes = [
+  {
+    name: 'Showroom Lead Form',
+    path: '/showroom-lead',
+    element: <ShowroomLeadForm />,
+  },
+  {
+    name: 'Thank You',
+    path: '/thank-you',
+    element: <ThankYou />,
+  },
 ]

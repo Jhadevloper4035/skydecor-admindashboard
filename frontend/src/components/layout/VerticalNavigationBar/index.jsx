@@ -4,9 +4,11 @@ import LogoBox from '@/components/LogoBox'
 import SimplebarReactClient from '@/components/wrappers/SimplebarReactClient'
 import { getMenuItems } from '@/helpers/menu'
 import HoverMenuToggle from './components/HoverMenuToggle'
+import { useAuthContext } from '@/context/useAuthContext'
 const AppMenu = lazy(() => import('./components/AppMenu'))
 const VerticalNavigationBar = () => {
-  const menuItems = getMenuItems()
+  const { user } = useAuthContext()
+  const menuItems = getMenuItems(user?.accessType)
   return (
     <div className="main-nav" id="leftside-menu-container">
       <LogoBox

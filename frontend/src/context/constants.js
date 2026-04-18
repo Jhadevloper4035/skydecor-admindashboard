@@ -1,8 +1,8 @@
 export const currency = '$';
 export const currentYear = new Date().getFullYear();
 export const developedByLink = 'https://techzaa.getappui.com/';
-export const developedBy = 'Techzaa';
-export const contactUs = 'techzaastudio@gmail.com';
+export const developedBy = 'Rantechnology';
+export const contactUs = 'info@rantechnology.in';
 export const buyLink = '';
 export const basePath = '';
 export const DEFAULT_PAGE_TITLE = 'Skydecor Admin Dashboard';

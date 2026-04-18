@@ -1,6 +1,11 @@
 import { MENU_ITEMS } from '@/assets/data/menu-items';
-export const getMenuItems = () => {
-  return MENU_ITEMS;
+
+const isAllowed = (item, accessType) =>
+  !item.roles || item.roles.includes(accessType);
+
+export const getMenuItems = (accessType) => {
+  if (!accessType) return MENU_ITEMS;
+  return MENU_ITEMS.filter((item) => isAllowed(item, accessType));
 };
 export const findAllParent = (menuItems, menuItem) => {
   let parents = [];

@@ -47,3 +47,27 @@
     object-fit: contain;
     height: auto;
 }
+
+// Dark-theme overrides for the showroom lead add form
+.lead-form-field {
+  .form-label {
+    color: #dee2e6;
+  }
+
+  .form-control {
+    background-color: #2b2b2b;
+    border-color: #444;
+    color: #dee2e6;
+
+    &::placeholder {
+      color: #6c757d;
+    }
+
+    &:focus {
+      background-color: #2b2b2b;
+      border-color: #6c757d;
+      color: #dee2e6;
+      box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
+    }
+  }
+}

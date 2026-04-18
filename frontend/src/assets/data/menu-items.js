@@ -19,58 +19,60 @@ export const MENU_ITEMS = [
     ],
   },
 
-  // ── Apps (Leads) ───────────────────────────────────────────────────────────
+  // ── Leads ──────────────────────────────────────────────────────────────────
   {
-    key: 'apps-leads',
-    label: 'Apps',
+    key: 'leads-section',
+    label: 'Leads',
     isTitle: true,
+    roles: ['admin', 'superadmin', 'event'],
   },
   {
-    key: 'showroom-leads',
-    icon: 'iconamoon:store-thin',
-    label: 'Showroom Leads',
-    url: '/showroom-leads',
-  },
-  {
-    key: 'events-leads',
-    icon: 'iconamoon:calendar-remove-thin',
-    label: 'Events Leads',
+    key: 'leads',
+    icon: 'iconamoon:contact-duotone',
+    label: 'Leads',
+    roles: ['admin', 'superadmin', 'event'],
     children: [
+      {
+        key: 'showroom-leads',
+        label: 'Showroom Leads',
+        url: '/showroom-leads',
+        parentKey: 'leads',
+      },
       {
         key: 'event-lead-1',
         label: 'Matecia 2025',
         url: '/pages/event-leads/MATECIA 2025',
-        parentKey: 'events-leads',
+        parentKey: 'leads',
       },
       {
         key: 'event-lead-2',
         label: 'Foaid 2025 Delhi',
         url: '/pages/event-leads/FOAID 2025 Delhi',
-        parentKey: 'events-leads',
+        parentKey: 'leads',
       },
       {
         key: 'event-lead-3',
         label: 'Legacy 3.0 Meerut',
         url: '/pages/event-leads/Legacy 3.0 Meerut',
-        parentKey: 'events-leads',
+        parentKey: 'leads',
       },
       {
         key: 'event-lead-4',
         label: 'Foaid Mumbai Exhibition',
         url: '/pages/event-leads/FOAID MUMBAI exhibition',
-        parentKey: 'events-leads',
+        parentKey: 'leads',
       },
       {
         key: 'event-lead-6',
         label: 'Indiawood Exhibition',
         url: '/pages/event-leads/indiawood-exhibition',
-        parentKey: 'events-leads',
+        parentKey: 'leads',
       },
       {
         key: 'event-lead-7',
         label: 'Idac Mumbai 2026',
         url: '/pages/event-leads/idac-mumbai-2026',
-        parentKey: 'events-leads',
+        parentKey: 'leads',
       },
     ],
   },
@@ -204,6 +206,34 @@ export const MENU_ITEMS = [
         label: 'Create SEO Meta',
         url: '/seo-meta/create',
         parentKey: 'seo-meta',
+      },
+    ],
+  },
+
+  // ── Administration (admin + superadmin) ──────────────────────────────────
+  {
+    key: 'admin-section',
+    label: 'Administration',
+    isTitle: true,
+    roles: ['admin', 'superadmin'],
+  },
+  {
+    key: 'user-management',
+    icon: 'iconamoon:profile-circle-duotone',
+    label: 'User Management',
+    roles: ['admin', 'superadmin'],
+    children: [
+      {
+        key: 'users-list',
+        label: 'All Users',
+        url: '/users',
+        parentKey: 'user-management',
+      },
+      {
+        key: 'users-create',
+        label: 'Create User',
+        url: '/auth/sign-up',
+        parentKey: 'user-management',
       },
     ],
   },

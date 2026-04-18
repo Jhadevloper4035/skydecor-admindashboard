@@ -11,6 +11,8 @@ export default defineConfig({
     }
   },
   server: {
+    host: true,                   // bind to 0.0.0.0 so Docker port mapping works
+    port: 5173,
     proxy: {
       '/api': {
         target: 'http://backend:8000',
