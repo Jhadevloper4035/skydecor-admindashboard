@@ -19,25 +19,31 @@ export const MENU_ITEMS = [
     ],
   },
 
-  // ── Leads ──────────────────────────────────────────────────────────────────
-  {
-    key: 'leads-section',
+
+    {
+    key: 'showroom-leads-section',
     label: 'Leads',
     isTitle: true,
     roles: ['admin', 'superadmin', 'event'],
   },
+
+
+
+  {
+    key: 'showroom-leads',
+    icon: 'iconamoon:comment-dots-duotone',
+    label: 'Showroom Leads',
+    url: '/showroom-leads',
+    roles: ['admin', 'superadmin', 'event'],
+  },
+
+  // ── Leads ──────────────────────────────────────────────────────────────────
   {
     key: 'leads',
-    icon: 'iconamoon:contact-duotone',
+    icon: 'iconamoon:comment-dots-duotone',
     label: 'Leads',
     roles: ['admin', 'superadmin', 'event'],
     children: [
-      {
-        key: 'showroom-leads',
-        label: 'Showroom Leads',
-        url: '/showroom-leads',
-        parentKey: 'leads',
-      },
       {
         key: 'event-lead-1',
         label: 'Matecia 2025',
