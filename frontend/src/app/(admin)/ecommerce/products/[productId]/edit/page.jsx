@@ -20,6 +20,7 @@ const EditProduct = () => {
   const { products, loading, fetchProducts, updateProduct } = useProductStore();
   const [saving, setSaving] = useState(false);
   const [productImage, setProductImage] = useState('');
+  const [applicationImages, setApplicationImages] = useState([]);
 
   const { control, handleSubmit, reset } = useForm();
 
@@ -46,6 +47,7 @@ const EditProduct = () => {
         isActive:     product.isActive     ?? true,
       });
       setProductImage(product.image ?? '');
+      setApplicationImages(product.applicationImage ?? []);
     }
   }, [product, reset]);
 
@@ -57,7 +59,7 @@ const EditProduct = () => {
 
   const onSubmit = async (values) => {
     setSaving(true);
-    const result = await updateProduct(productId, { ...values, image: productImage });
+    const result = await updateProduct(productId, { ...values, image: productImage, applicationImage: applicationImages });
     setSaving(false);
     if (result) navigate(`/ecommerce/products/${productId}`);
   };
@@ -116,13 +118,27 @@ const EditProduct = () => {
 
                   <Col md={12}>
                     <div className="mb-3">
-                      <label className="form-label">Product Image</label>
+                      <label className="form-label">Product Image <span className="text-muted fs-12">(recommended: 350 × 700 px)</span></label>
                       <ImageUploader
                         folder="products"
                         multiple={false}
                         value={productImage ? [productImage] : []}
                         onComplete={([key]) => setProductImage(key)}
                         onRemove={() => setProductImage('')}
+                      />
+                    </div>
+                  </Col>
+
+                  <Col md={12}>
+                    <div className="mb-3">
+                      <label className="form-label">Application Images <span className="text-muted fs-13">(multiple)</span></label>
+                      <ImageUploader
+                        folder="products"
+                        multiple={true}
+                        maxFiles={10}
+                        value={applicationImages}
+                        onComplete={(keys) => setApplicationImages((prev) => [...prev, ...keys])}
+                        onRemove={(key) => setApplicationImages((prev) => prev.filter((k) => k !== key))}
                       />
                     </div>
                   </Col>

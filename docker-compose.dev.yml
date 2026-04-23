@@ -47,6 +47,8 @@ services:
     networks:
       - skydecor-dev-net
 
+      
+
 networks:
   skydecor-dev-net:
     driver: bridge

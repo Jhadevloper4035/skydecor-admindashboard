@@ -118,7 +118,13 @@ export default function ImageUploader({
         keys = key ? [key] : [];
       }
     }
-    if (keys?.length) onComplete?.(keys);
+    if (keys?.length) {
+      onComplete?.(keys);
+      // Remove successfully uploaded files — they now appear as "Saved" in the preview above
+      storeRef.current.getState().files
+        .filter((f) => f.status === "success")
+        .forEach((f) => removeFile(f.id));
+    }
   };
 
   const pendingCount = files.filter((f) => f.status === "idle" || f.status === "error").length;

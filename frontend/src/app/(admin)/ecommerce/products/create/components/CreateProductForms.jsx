@@ -17,6 +17,7 @@ const CreateProductForms = () => {
   const navigate = useNavigate();
   const { createProduct } = useProductStore();
   const [productImage, setProductImage] = useState('');
+  const [applicationImages, setApplicationImages] = useState([]);
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -27,7 +28,7 @@ const CreateProductForms = () => {
   });
 
   const onSubmit = async (values) => {
-    const result = await createProduct({ ...values, image: productImage });
+    const result = await createProduct({ ...values, image: productImage, applicationImage: applicationImages });
     if (result) navigate('/ecommerce/products');
   };
 
@@ -70,13 +71,27 @@ const CreateProductForms = () => {
 
         <Col md={12}>
           <div className="mb-3">
-            <label className="form-label">Product Image</label>
+            <label className="form-label">Product Image <span className="text-muted fs-12">(recommended: 350 × 700 px)</span></label>
             <ImageUploader
               folder="products"
               multiple={false}
               value={productImage ? [productImage] : []}
               onComplete={([key]) => setProductImage(key)}
               onRemove={() => setProductImage('')}
+            />
+          </div>
+        </Col>
+
+        <Col md={12}>
+          <div className="mb-3">
+            <label className="form-label">Application Images <span className="text-muted fs-13">(multiple)</span></label>
+            <ImageUploader
+              folder="products"
+              multiple={true}
+              maxFiles={10}
+              value={applicationImages}
+              onComplete={(keys) => setApplicationImages((prev) => [...prev, ...keys])}
+              onRemove={(key) => setApplicationImages((prev) => prev.filter((k) => k !== key))}
             />
           </div>
         </Col>

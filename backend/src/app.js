@@ -55,7 +55,6 @@ app.use(cookieParser());
 app.use("/api", routes);
 
 
-
 // ── Error handling (must be last) ─────────────────────────────────────────────
 app.use(notFound);
 app.use(errorHandler);

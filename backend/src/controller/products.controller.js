@@ -36,7 +36,7 @@ exports.createProduct = async (req, res) => {
     const {
       productName, productCode, productType, isActive,
       category, subCategory, texture, textureCode,
-      size, thickness, width, image, pdfUrlPath,
+      size, thickness, width, image, pdfUrlPath, applicationImage,
     } = req.body;
 
     if (!productName || !productCode || !productType || !category || !subCategory ||
@@ -58,6 +58,7 @@ exports.createProduct = async (req, res) => {
       width,
       image,
       pdfUrlPath,
+      applicationImage: applicationImage ?? [],
     });
 
     const saved = await product.save();
@@ -79,23 +80,24 @@ exports.updateProduct = async (req, res) => {
     const {
       productName, productCode, productType, isActive,
       category, subCategory, texture, textureCode,
-      size, thickness, width, image, pdfUrlPath,
+      size, thickness, width, image, pdfUrlPath, applicationImage,
     } = req.body;
 
     const update = {};
-    if (productName  !== undefined) update.productName  = productName;
-    if (productCode  !== undefined) update.productCode  = productCode;
-    if (productType  !== undefined) update.productType  = productType;
-    if (isActive     !== undefined) update.isActive     = isActive;
-    if (category     !== undefined) update.category     = category;
-    if (subCategory  !== undefined) update.subCategory  = subCategory;
-    if (texture      !== undefined) update.texture      = texture;
-    if (textureCode  !== undefined) update.textureCode  = textureCode;
-    if (size         !== undefined) update.size         = size;
-    if (thickness    !== undefined) update.thickness    = thickness;
-    if (width        !== undefined) update.width        = width;
-    if (image        !== undefined) update.image        = image;
-    if (pdfUrlPath   !== undefined) update.pdfUrlPath   = pdfUrlPath;
+    if (productName      !== undefined) update.productName      = productName;
+    if (productCode      !== undefined) update.productCode      = productCode;
+    if (productType      !== undefined) update.productType      = productType;
+    if (isActive         !== undefined) update.isActive         = isActive;
+    if (category         !== undefined) update.category         = category;
+    if (subCategory      !== undefined) update.subCategory      = subCategory;
+    if (texture          !== undefined) update.texture          = texture;
+    if (textureCode      !== undefined) update.textureCode      = textureCode;
+    if (size             !== undefined) update.size             = size;
+    if (thickness        !== undefined) update.thickness        = thickness;
+    if (width            !== undefined) update.width            = width;
+    if (image            !== undefined) update.image            = image;
+    if (pdfUrlPath       !== undefined) update.pdfUrlPath       = pdfUrlPath;
+    if (applicationImage !== undefined) update.applicationImage = applicationImage;
 
     // Re-generate slug fields when slug-source fields change
     if (update.productCode) {

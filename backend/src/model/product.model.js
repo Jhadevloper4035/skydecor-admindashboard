@@ -100,6 +100,23 @@ const productSchema = new mongoose.Schema(
             required: [true, "Image URL is required"],
             trim: true,
         },
+        applicationImage: {
+            type: [String],
+            default: [],
+            set: function (images) {
+                const imageList = Array.isArray(images)
+                    ? images
+                    : typeof images === "string" && images.trim()
+                        ? [images]
+                        : [];
+
+                return imageList
+                    .map(function (image) {
+                        return typeof image === "string" ? image.trim() : "";
+                    })
+                    .filter(Boolean);
+            },
+        },
         pdfUrlPath: {
             type: String,
             required: [true, "PDF URL is required"],
