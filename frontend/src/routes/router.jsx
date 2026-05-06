@@ -10,7 +10,7 @@ const AppRouter = props => {
   const { isAuthenticated, user, loading } = useAuthContext();
 
   // Wait for the /me check before rendering any route to avoid flicker
-  if (loading) return null;
+  if (loading) return <Preloader />;
 
   const isValidUser = isAuthenticated && ALL_ACCESS_TYPES.includes(user?.accessType);
 

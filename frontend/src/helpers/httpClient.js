@@ -6,8 +6,16 @@ const rawApiBase =
 
 const API_BASE_URL = rawApiBase.replace(/\/$/, "");
 
+const buildApiUrl = (url) => {
+  if (API_BASE_URL.endsWith("/api") && url.startsWith("/api/")) {
+    return `${API_BASE_URL}${url.slice(4)}`;
+  }
+
+  return `${API_BASE_URL}${url}`;
+};
+
 export const apiFetch = async (url, options = {}) => {
-  const res = await fetch(`${API_BASE_URL}${url}`, {
+  const res = await fetch(buildApiUrl(url), {
     credentials: "include",
     ...options,
   });
@@ -25,7 +33,7 @@ export const apiFetch = async (url, options = {}) => {
 };
 
 export const downloadExcel = async (url, filename) => {
-  const res = await fetch(`${API_BASE_URL}${url}`, {
+  const res = await fetch(buildApiUrl(url), {
     credentials: "include",
   });
 

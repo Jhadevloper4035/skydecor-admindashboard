@@ -64,7 +64,7 @@ const qrCodeSchema = new mongoose.Schema(
     scanCount: {
       type: Number,
       default: 0,
-      min: 0,
+      min: 0, 
     },
     status: {
       type: String,
@@ -106,11 +106,10 @@ const qrCodeSchema = new mongoose.Schema(
 );
 
 // Indexes for better query performance
-qrCodeSchema.index({ productId: 1, status: 1 });
 qrCodeSchema.index({ productCode: 1, status: 1 });
 qrCodeSchema.index({ category: 1, subcategory: 1 });
 qrCodeSchema.index({ productType: 1, status: 1 });
-qrCodeSchema.index({ createdAt: -1 });
+
 
 // Virtual to check if QR code is expired
 qrCodeSchema.virtual("isExpired").get(function () {

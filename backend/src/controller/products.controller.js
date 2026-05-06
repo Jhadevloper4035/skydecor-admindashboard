@@ -1,5 +1,26 @@
 const Product = require("../model/product.model.js");
 const slugify = require("slugify");
+const { sendExcelDownload } = require("../utils/excel.js");
+
+const formatProductForExport = (product) => ({
+  "Product Code": product.productCode || "",
+  "Product Name": product.productName || "",
+  "Design Name": product.designName || "",
+  "Product Type": product.productType || "",
+  Category: product.category || "",
+  "Sub Category": product.subCategory || "",
+  Texture: product.texture || "",
+  "Texture Code": product.textureCode || "",
+  Size: product.size || "",
+  Thickness: product.thickness || "",
+  Width: product.width || "",
+  Status: product.isActive ? "Active" : "Inactive",
+  "Image URL": product.image || "",
+  "Application Images": Array.isArray(product.applicationImage) ? product.applicationImage.join(", ") : "",
+  "PDF URL": product.pdfUrlPath || "",
+  "Created At": product.createdAt ? new Date(product.createdAt).toISOString() : "",
+  "Updated At": product.updatedAt ? new Date(product.updatedAt).toISOString() : "",
+});
 
 exports.getProducts = async (req, res) => {
   try {
@@ -28,6 +49,20 @@ exports.getProducts = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ success: false, message: "Error fetching products", error: error.message });
+  }
+};
+
+exports.downloadProducts = async (req, res) => {
+  try {
+    const products = await Product.find({})
+      .sort({ createdAt: -1 })
+      .select("-__v -searchText")
+      .lean();
+
+    sendExcelDownload(res, products.map(formatProductForExport), "Products.xlsx");
+  } catch (error) {
+    console.error("Error downloading products:", error);
+    res.status(500).json({ success: false, message: "Error downloading products", error: error.message });
   }
 };
 

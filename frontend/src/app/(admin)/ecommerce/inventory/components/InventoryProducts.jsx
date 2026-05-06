@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button, Card, CardBody, Col, Form, Modal, Row, Spinner } from 'react-bootstrap';
 import { useEffect, useMemo, useState } from 'react';
 import useProductStore from '@/store/productStore';
+import { downloadExcel } from '@/helpers/httpClient';
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
 
@@ -15,6 +16,7 @@ const InventoryProducts = ({ filters }) => {
   const { products, loading, fetchProducts, deleteProduct } = useProductStore();
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
+  const [downloading, setDownloading] = useState(false);
 
   const handleDelete = async (id) => {
     await deleteProduct(id);
@@ -57,6 +59,15 @@ const InventoryProducts = ({ filters }) => {
     setPage(1);
   };
 
+  const handleDownloadExcel = async () => {
+    setDownloading(true);
+    try {
+      await downloadExcel('/api/product/download', 'Products.xlsx');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => {
       const av = a[sortField] ?? '';
@@ -95,9 +106,13 @@ const InventoryProducts = ({ filters }) => {
       <CardBody>
         <Row className="align-items-center mb-2">
           <Col xs={12} md="auto" className="d-flex flex-wrap gap-2">
-            <Button variant="secondary">
-              <IconifyIcon icon="bx:export" className="me-1 icons-center" />
-              Export
+            <Button variant="success" onClick={handleDownloadExcel} disabled={downloading}>
+              {downloading ? (
+                <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" />
+              ) : (
+                <IconifyIcon icon="bx:export" className="me-1 icons-center" />
+              )}
+              {downloading ? 'Preparing...' : 'Export Excel'}
             </Button>
             <Button variant="secondary">
               <IconifyIcon icon="bx:import" className="me-1 icons-center" />
