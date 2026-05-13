@@ -5,12 +5,15 @@ services:
   # ── Backend ──────────────────────────────────────────────────────────────────
   backend:
     container_name: skydecor-backend
-    image: ${DOCKERHUB_USERNAME}/skydecor-backend:latest
+    image: ${BACKEND_IMAGE:-skydecor-backend:latest}
     build:
       context: ./backend
       dockerfile: Dockerfile
       target: production
     restart: unless-stopped
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     env_file:
       - ./backend/.env.production
     environment:
@@ -23,9 +26,10 @@ services:
   # ── Frontend ─────────────────────────────────────────────────────────────────
   # nginx-unprivileged serves on port 8080 internally; host port 3001 avoids
   # conflict with Nginx on the EC2 host which occupies port 80.
+
   frontend:
     container_name: skydecor-frontend
-    image: ${DOCKERHUB_USERNAME}/skydecor-frontend:latest
+    image: ${FRONTEND_IMAGE:-skydecor-frontend:latest}
     build:
       context: ./frontend
       dockerfile: Dockerfile

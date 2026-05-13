@@ -22,6 +22,10 @@ const Events = lazy(() => import('@/app/(admin)/events/page'))
 const EventCreate = lazy(() => import('@/app/(admin)/events/create/page'))
 const EventDetail = lazy(() => import('@/app/(admin)/events/[eventId]/page'))
 const EventEdit = lazy(() => import('@/app/(admin)/events/[eventId]/edit/page'))
+const CisrEvents = lazy(() => import('@/app/(admin)/cisr-events/page'))
+const CisrEventCreate = lazy(() => import('@/app/(admin)/cisr-events/create/page'))
+const CisrEventDetail = lazy(() => import('@/app/(admin)/cisr-events/[eventId]/page'))
+const CisrEventEdit = lazy(() => import('@/app/(admin)/cisr-events/[eventId]/edit/page'))
 
 // SEO Meta Routes
 const SeoMetaList = lazy(() => import('@/app/(admin)/seo-meta/page'))
@@ -148,6 +152,30 @@ const customRoutes = [
     name: 'Event Edit',
     path: '/events/:eventId/edit',
     element: <EventEdit />,
+    roles: ['admin', 'superadmin'],
+  },
+  {
+    name: 'CISR Events',
+    path: '/cisr-events',
+    element: <CisrEvents />,
+    roles: ['admin', 'superadmin'],
+  },
+  {
+    name: 'CISR Event Create',
+    path: '/cisr-events/create',
+    element: <CisrEventCreate />,
+    roles: ['admin', 'superadmin'],
+  },
+  {
+    name: 'CISR Event Detail',
+    path: '/cisr-events/:eventId',
+    element: <CisrEventDetail />,
+    roles: ['admin', 'superadmin'],
+  },
+  {
+    name: 'CISR Event Edit',
+    path: '/cisr-events/:eventId/edit',
+    element: <CisrEventEdit />,
     roles: ['admin', 'superadmin'],
   },
   {

@@ -178,6 +178,25 @@ export const MENU_ITEMS = [
     ],
   },
   {
+    key: 'cisr-events',
+    icon: 'iconamoon:calendar-1-duotone',
+    label: 'CISR Events',
+    children: [
+      {
+        key: 'cisr-events-list',
+        label: 'All CISR Events',
+        url: '/cisr-events',
+        parentKey: 'cisr-events',
+      },
+      {
+        key: 'cisr-events-create',
+        label: 'Create CISR Event',
+        url: '/cisr-events/create',
+        parentKey: 'cisr-events',
+      },
+    ],
+  },
+  {
     key: 'showrooms',
     icon: 'iconamoon:store-thin',
     label: 'Showrooms',

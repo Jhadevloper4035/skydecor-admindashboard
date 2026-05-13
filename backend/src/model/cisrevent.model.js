@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 
-const eventSchema = new mongoose.Schema({
+const cisrEventSchema = new mongoose.Schema({
     id: {
         type: Number,
         required: true,
@@ -42,16 +42,16 @@ const eventSchema = new mongoose.Schema({
         }
     }
 }, {
-    timestamps: true, // Adds createdAt and updatedAt
+    timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
 });
 
 // Compound index for common queries
-eventSchema.index({ date: -1, slug: 1 });
+cisrEventSchema.index({ date: -1, slug: 1 });
 
 // Pre-save hook to auto-generate slug from title
-eventSchema.pre('save', async function (next) {
+cisrEventSchema.pre('save', async function (next) {
     // Only generate slug if title is modified or it's a new document
     if (this.isModified('title') || this.isNew) {
         let baseSlug = slugify(this.title, {
@@ -74,22 +74,22 @@ eventSchema.pre('save', async function (next) {
     next();
 });
 
-// Static method to find by slug (optimized with lean for read-only operations)
-eventSchema.statics.findBySlug = function (slug, lean = true) {
+// Static method to find by slug
+cisrEventSchema.statics.findBySlug = function (slug, lean = true) {
     const query = this.findOne({ slug });
     return lean ? query.lean() : query;
 };
 
-// Static method to find upcoming events
-eventSchema.statics.findUpcoming = function (limit = 10) {
+// Static method to find upcoming CISR events
+cisrEventSchema.statics.findUpcoming = function (limit = 10) {
     return this.find({ date: { $gte: new Date() } })
         .sort({ date: 1 })
         .limit(limit)
         .lean();
 };
 
-// Static method to find events by date range
-eventSchema.statics.findByDateRange = function (startDate, endDate) {
+// Static method to find CISR events by date range
+cisrEventSchema.statics.findByDateRange = function (startDate, endDate) {
     return this.find({
         date: {
             $gte: startDate,
@@ -101,12 +101,12 @@ eventSchema.statics.findByDateRange = function (startDate, endDate) {
 };
 
 // Instance method to check if event is upcoming
-eventSchema.methods.isUpcoming = function () {
+cisrEventSchema.methods.isUpcoming = function () {
     return this.date >= new Date();
 };
 
-// Virtual for formatted date (example)
-eventSchema.virtual('formattedDate').get(function () {
+// Virtual for formatted date
+cisrEventSchema.virtual('formattedDate').get(function () {
     return this.date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
@@ -114,4 +114,4 @@ eventSchema.virtual('formattedDate').get(function () {
     });
 });
 
-module.exports = mongoose.model('Event', eventSchema);
+module.exports = mongoose.model('CisrEvent', cisrEventSchema);
