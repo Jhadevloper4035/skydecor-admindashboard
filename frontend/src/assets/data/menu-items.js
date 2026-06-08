@@ -4,12 +4,14 @@ export const MENU_ITEMS = [
     key: 'general',
     label: 'General',
     isTitle: true,
+    roles: ['admin', 'superadmin', 'event', 'showroom', 'website', 'sales'],
   },
   {
     key: 'dashboard',
     icon: 'iconamoon:home-duotone',
     label: 'Dashboard',
     url: '/dashboard',
+    roles: ['admin', 'superadmin', 'event', 'showroom', 'website', 'sales'],
   },
 
 
@@ -94,30 +96,35 @@ export const MENU_ITEMS = [
     key: 'website-apps',
     label: 'Website Apps',
     isTitle: true,
+    roles: ['admin', 'superadmin', 'website', 'sales', 'jobs'],
   },
   {
     key: 'website-leads',
     icon: 'iconamoon:email-thin',
     label: 'Website Leads',
     url: '/pages/website-leads',
+    roles: ['admin', 'superadmin', 'website', 'sales'],
   },
   {
     key: 'product-enquiries',
     icon: 'iconamoon:shopping-bag-duotone',
     label: 'Product Enquiries',
     url: '/pages/product-enquiries',
+    roles: ['admin', 'superadmin', 'website', 'sales'],
   },
   {
     key: 'job-applications',
     icon: 'iconamoon:profile-circle-duotone',
     label: 'Job Applications',
     url: '/pages/job-applications',
+    roles: ['admin', 'superadmin', 'website', 'sales', 'jobs'],
   },
   {
     key: 'qr-codes',
     icon: 'iconamoon:comment-dots-duotone',
     label: 'Qr Codes',
     url: '/pages/qr-codes',
+    roles: ['admin', 'superadmin', 'website', 'sales'],
   },
 
   // ── Website Utilities ─────────────────────────────────────────────────────
@@ -125,11 +132,13 @@ export const MENU_ITEMS = [
     key: 'website-utilities',
     label: 'Website Utilities',
     isTitle: true,
+    roles: ['admin', 'superadmin', 'jobs'],
   },
   {
     key: 'products',
     icon: 'iconamoon:shopping-bag-duotone',
     label: 'Products',
+    roles: ['admin', 'superadmin'],
     children: [
       {
         key: 'products-list',
@@ -149,6 +158,7 @@ export const MENU_ITEMS = [
     key: 'blogs',
     icon: 'iconamoon:edit-duotone',
     label: 'Blogs',
+    roles: ['admin', 'superadmin'],
     children: [
       {
         key: 'blogs-list',
@@ -168,6 +178,7 @@ export const MENU_ITEMS = [
     key: 'jobs',
     icon: 'iconamoon:profile-circle-duotone',
     label: 'Jobs',
+    roles: ['admin', 'superadmin', 'jobs'],
     children: [
       {
         key: 'jobs-list',
@@ -187,6 +198,7 @@ export const MENU_ITEMS = [
     key: 'events',
     icon: 'iconamoon:store-thin',
     label: 'Events',
+    roles: ['admin', 'superadmin'],
     children: [
       {
         key: 'events-list',
@@ -206,6 +218,7 @@ export const MENU_ITEMS = [
     key: 'cisr-events',
     icon: 'iconamoon:calendar-1-duotone',
     label: 'CISR Events',
+    roles: ['admin', 'superadmin'],
     children: [
       {
         key: 'cisr-events-list',
@@ -225,6 +238,7 @@ export const MENU_ITEMS = [
     key: 'showrooms',
     icon: 'iconamoon:store-thin',
     label: 'Showrooms',
+    roles: ['admin', 'superadmin'],
     children: [
       {
         key: 'showrooms-list',
@@ -244,6 +258,7 @@ export const MENU_ITEMS = [
     key: 'seo-meta',
     icon: 'iconamoon:trend-up-duotone',
     label: 'SEO Meta',
+    roles: ['admin', 'superadmin'],
     children: [
       {
         key: 'seo-meta-list',

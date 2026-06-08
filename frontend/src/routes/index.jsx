@@ -81,11 +81,12 @@ const initialRoutes = [
 ]
 
 // All valid access types — used to gate entry into the admin layout
-export const ALL_ACCESS_TYPES = ['event', 'admin', 'showroom', 'website', 'superadmin', 'sales']
+export const ALL_ACCESS_TYPES = ['event', 'admin', 'showroom', 'website', 'superadmin', 'sales', 'jobs', 'custom']
 
 // superadmin : all routes
 // admin      : all routes except user creation
 // website    : dashboard + website-related leads (website leads, product enquiries, job apps, QR codes)
+// jobs       : job post CRUD + job applications
 // event      : dashboard + event leads + showroom leads
 
 const generalRoutes = [
@@ -93,6 +94,8 @@ const generalRoutes = [
     path: '/dashboard',
     name: 'Dashboard',
     element: <Dashboard />,
+    roles: ['admin', 'superadmin', 'event', 'showroom', 'website', 'sales', 'custom'],
+    permissions: ['dashboard.view'],
   },
   {
     path: '/dashboard/analytics',
@@ -106,25 +109,29 @@ const appsRoutes = [
     name: 'Product Details',
     path: '/ecommerce/products/:productId',
     element: <EcommerceProductDetails />,
-    roles: ['admin', 'superadmin'],
+    roles: ['admin', 'superadmin', 'custom'],
+    permissions: ['products.manage'],
   },
   {
     name: 'Create Product',
     path: '/ecommerce/products/create',
     element: <EcommerceProductCreate />,
-    roles: ['admin', 'superadmin'],
+    roles: ['admin', 'superadmin', 'custom'],
+    permissions: ['products.manage'],
   },
   {
     name: 'Edit Product',
     path: '/ecommerce/products/:productId/edit',
     element: <EcommerceProductEdit />,
-    roles: ['admin', 'superadmin'],
+    roles: ['admin', 'superadmin', 'custom'],
+    permissions: ['products.manage'],
   },
   {
     name: 'Inventory',
     path: '/ecommerce/inventory',
     element: <EcommerceInventory />,
-    roles: ['admin', 'superadmin'],
+    roles: ['admin', 'superadmin', 'custom'],
+    permissions: ['products.manage'],
   },
 ]
 
@@ -133,97 +140,113 @@ const customRoutes = [
     name: 'Events',
     path: '/events',
     element: <Events />,
-    roles: ['admin', 'superadmin'],
+    roles: ['admin', 'superadmin', 'custom'],
+    permissions: ['events.manage'],
   },
   {
     name: 'Event Create',
     path: '/events/create',
     element: <EventCreate />,
-    roles: ['admin', 'superadmin'],
+    roles: ['admin', 'superadmin', 'custom'],
+    permissions: ['events.manage'],
   },
   {
     name: 'Event Detail',
     path: '/events/:eventId',
     element: <EventDetail />,
-    roles: ['admin', 'superadmin'],
+    roles: ['admin', 'superadmin', 'custom'],
+    permissions: ['events.manage'],
   },
   {
     name: 'Event Edit',
     path: '/events/:eventId/edit',
     element: <EventEdit />,
-    roles: ['admin', 'superadmin'],
+    roles: ['admin', 'superadmin', 'custom'],
+    permissions: ['events.manage'],
   },
   {
     name: 'CISR Events',
     path: '/cisr-events',
     element: <CisrEvents />,
-    roles: ['admin', 'superadmin'],
+    roles: ['admin', 'superadmin', 'custom'],
+    permissions: ['cisrEvents.manage'],
   },
   {
     name: 'CISR Event Create',
     path: '/cisr-events/create',
     element: <CisrEventCreate />,
-    roles: ['admin', 'superadmin'],
+    roles: ['admin', 'superadmin', 'custom'],
+    permissions: ['cisrEvents.manage'],
   },
   {
     name: 'CISR Event Detail',
     path: '/cisr-events/:eventId',
     element: <CisrEventDetail />,
-    roles: ['admin', 'superadmin'],
+    roles: ['admin', 'superadmin', 'custom'],
+    permissions: ['cisrEvents.manage'],
   },
   {
     name: 'CISR Event Edit',
     path: '/cisr-events/:eventId/edit',
     element: <CisrEventEdit />,
-    roles: ['admin', 'superadmin'],
+    roles: ['admin', 'superadmin', 'custom'],
+    permissions: ['cisrEvents.manage'],
   },
   {
     name: 'Blogs',
     path: '/blogs',
     element: <Blogs />,
-    roles: ['admin', 'superadmin'],
+    roles: ['admin', 'superadmin', 'custom'],
+    permissions: ['blogs.manage'],
   },
   {
     name: 'Blog Create',
     path: '/blogs/create',
     element: <BlogCreate />,
-    roles: ['admin', 'superadmin'],
+    roles: ['admin', 'superadmin', 'custom'],
+    permissions: ['blogs.manage'],
   },
   {
     name: 'Blog Detail',
     path: '/blogs/:blogId',
     element: <BlogDetail />,
-    roles: ['admin', 'superadmin'],
+    roles: ['admin', 'superadmin', 'custom'],
+    permissions: ['blogs.manage'],
   },
   {
     name: 'Blog Edit',
     path: '/blogs/:blogId/edit',
     element: <BlogEdit />,
-    roles: ['admin', 'superadmin'],
+    roles: ['admin', 'superadmin', 'custom'],
+    permissions: ['blogs.manage'],
   },
   {
     name: 'Jobs',
     path: '/jobs',
     element: <Jobs />,
-    roles: ['admin', 'superadmin'],
+    roles: ['admin', 'superadmin', 'jobs', 'custom'],
+    permissions: ['jobs.manage'],
   },
   {
     name: 'Job Create',
     path: '/jobs/create',
     element: <JobCreate />,
-    roles: ['admin', 'superadmin'],
+    roles: ['admin', 'superadmin', 'jobs', 'custom'],
+    permissions: ['jobs.manage'],
   },
   {
     name: 'Job Detail',
     path: '/jobs/:jobId',
     element: <JobDetail />,
-    roles: ['admin', 'superadmin'],
+    roles: ['admin', 'superadmin', 'jobs', 'custom'],
+    permissions: ['jobs.manage'],
   },
   {
     name: 'Job Edit',
     path: '/jobs/:jobId/edit',
     element: <JobEdit />,
-    roles: ['admin', 'superadmin'],
+    roles: ['admin', 'superadmin', 'jobs', 'custom'],
+    permissions: ['jobs.manage'],
   },
   {
     name: 'SEO Meta List',
@@ -301,7 +324,7 @@ const customRoutes = [
     name: 'Job Applications',
     path: '/pages/job-applications',
     element: <JobApplications />,
-    roles: ['admin', 'superadmin', 'website', 'sales'],
+    roles: ['admin', 'superadmin', 'website', 'sales', 'jobs'],
   },
   {
     name: 'QR Codes',

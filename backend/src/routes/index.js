@@ -16,9 +16,20 @@ const authAdminRoute = require("./auth.routes.js");
 const uploadRoute = require("./upload.route.js");
 const healthRoute = require("./health.route.js");
 
-const { protect, requireRole } = require("../middleware/jwt.js");
+const { protect, requirePermission } = require("../middleware/jwt.js");
 
-const adminOnly = [protect, requireRole("admin", "superadmin")];
+const uploadAccess = [
+  protect,
+  requirePermission(
+    "products.manage",
+    "blogs.manage",
+    "events.manage",
+    "cisrEvents.manage",
+    "showrooms.manage",
+    "seoMeta.manage",
+    "jobs.manage"
+  ),
+];
 
 // Public routes — no auth required
 router.use("/health", healthRoute);
@@ -29,14 +40,14 @@ router.use("/lead", leadAdminRoute);
 router.use("/leads", leadAdminRoute);
 
 // Protected routes — admin or superadmin only
-router.use("/upload", adminOnly, uploadRoute);
-router.use("/showrooms", adminOnly, showroomAdminRoute);
-router.use("/qr-code",  qrcodeAdminRoute);
-router.use("/seo-meta", adminOnly, seoMetaAdminRoute);
-router.use("/events", adminOnly, eventAdminRoute);
-router.use("/cisr-events", adminOnly, cisrEventAdminRoute);
-router.use("/blog", adminOnly, blogAdminRoute);
-router.use("/product", adminOnly, productAdminRoute);
-router.use("/jobs", adminOnly, jobAdminRoute);
+router.use("/upload", uploadAccess, uploadRoute);
+router.use("/showrooms", protect, requirePermission("showrooms.manage"), showroomAdminRoute);
+router.use("/qr-code", protect, requirePermission("qrCodes.manage"), qrcodeAdminRoute);
+router.use("/seo-meta", protect, requirePermission("seoMeta.manage"), seoMetaAdminRoute);
+router.use("/events", protect, requirePermission("events.manage"), eventAdminRoute);
+router.use("/cisr-events", protect, requirePermission("cisrEvents.manage"), cisrEventAdminRoute);
+router.use("/blog", protect, requirePermission("blogs.manage"), blogAdminRoute);
+router.use("/product", protect, requirePermission("products.manage"), productAdminRoute);
+router.use("/jobs", protect, requirePermission("jobs.manage"), jobAdminRoute);
 
 module.exports = router;

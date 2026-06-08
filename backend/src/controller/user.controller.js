@@ -1,7 +1,21 @@
 const User = require("../model/user.model.js");
 const { generateToken } = require("../middleware/jwt.js");
+const { VALID_ACCESS_TYPES, VALID_PERMISSIONS } = require("../constants/access.js");
 
-const VALID_ACCESS_TYPES = ["event", "admin", "showroom", "website", "superadmin", "sales"];
+const elevatedAccessTypes = ["admin", "superadmin"];
+
+const cleanPermissions = (permissions) =>
+  Array.isArray(permissions)
+    ? [...new Set(permissions.filter((permission) => VALID_PERMISSIONS.includes(permission)))]
+    : [];
+
+const userPayload = (user) => ({
+  id: user._id,
+  _id: user._id,
+  name: user.name,
+  accessType: user.accessType,
+  permissions: user.permissions || [],
+});
 
 function cookieOptions() {
   return {
@@ -14,7 +28,8 @@ function cookieOptions() {
 
 // POST /api/user/register
 exports.register = async (req, res) => {
-  const { name, password, accessType } = req.body;
+  const { name, password, accessType = "custom" } = req.body;
+  const permissions = cleanPermissions(req.body.permissions);
 
   if (!name || !password) {
     return res.status(400).json({
@@ -32,6 +47,14 @@ exports.register = async (req, res) => {
     });
   }
 
+  if (req.user.accessType !== "superadmin" && elevatedAccessTypes.includes(accessType)) {
+    return res.status(403).json({
+      success: false,
+      status: "forbidden",
+      message: "Only superadmin can create admin or superadmin users.",
+    });
+  }
+
   try {
     const userExists = await User.findOne({ name });
     if (userExists) {
@@ -42,7 +65,7 @@ exports.register = async (req, res) => {
       });
     }
 
-    const user = await User.create({ name, password, accessType });
+    const user = await User.create({ name, password, accessType, permissions });
     const token = generateToken(user._id);
 
     res.cookie("token", token, cookieOptions());
@@ -52,7 +75,7 @@ exports.register = async (req, res) => {
       status: "registered",
       message: "Registration successful.",
       data: {
-        user: { id: user._id, name: user.name, accessType: user.accessType },
+        user: userPayload(user),
       },
     });
   } catch (error) {
@@ -89,7 +112,7 @@ exports.login = async (req, res) => {
         status: "logged_in",
         message: "Login successful.",
         data: {
-          user: { id: user._id, name: user.name, accessType: user.accessType },
+          user: userPayload(user),
         },
       });
     }
@@ -129,7 +152,7 @@ exports.getMe = (req, res) => {
     success: true,
     status: "ok",
     data: {
-      user: { id: req.user._id, name: req.user.name, accessType: req.user.accessType },
+      user: userPayload(req.user),
     },
   });
 };
@@ -151,6 +174,7 @@ exports.listUsers = async (req, res) => {
 // PUT /api/auth/users/:id — superadmin: update name, accessType, or password
 exports.updateUser = async (req, res) => {
   const { name, accessType, password } = req.body;
+  const permissions = cleanPermissions(req.body.permissions);
 
   if (accessType && !VALID_ACCESS_TYPES.includes(accessType)) {
     return res.status(400).json({
@@ -165,8 +189,18 @@ exports.updateUser = async (req, res) => {
       return res.status(404).json({ success: false, message: "User not found." });
     }
 
+    if (req.user.accessType !== "superadmin") {
+      if (elevatedAccessTypes.includes(user.accessType) || elevatedAccessTypes.includes(accessType)) {
+        return res.status(403).json({
+          success: false,
+          message: "Only superadmin can manage admin or superadmin users.",
+        });
+      }
+    }
+
     if (name) user.name = name;
     if (accessType) user.accessType = accessType;
+    if (req.body.permissions !== undefined) user.permissions = permissions;
     if (password) user.password = password;
 
     await user.save();
@@ -174,7 +208,7 @@ exports.updateUser = async (req, res) => {
     return res.status(200).json({
       success: true,
       status: "updated",
-      data: { user: { id: user._id, name: user.name, accessType: user.accessType } },
+      data: { user: userPayload(user) },
     });
   } catch (error) {
     console.error("Update user error:", error);
@@ -189,6 +223,18 @@ exports.deleteUser = async (req, res) => {
   }
 
   try {
+    const target = await User.findById(req.params.id);
+    if (!target) {
+      return res.status(404).json({ success: false, message: "User not found." });
+    }
+
+    if (req.user.accessType !== "superadmin" && elevatedAccessTypes.includes(target.accessType)) {
+      return res.status(403).json({
+        success: false,
+        message: "Only superadmin can delete admin or superadmin users.",
+      });
+    }
+
     const user = await User.findByIdAndDelete(req.params.id);
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found." });

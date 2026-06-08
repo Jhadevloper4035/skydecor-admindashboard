@@ -30,9 +30,15 @@ const useSignIn = () => {
       password: ''
     }
   });
-  const redirectUser = () => {
+  const redirectUser = (user) => {
     const redirectLink = searchParams.get('redirectTo');
-    if (redirectLink) navigate(redirectLink);else navigate('/');
+    if (redirectLink) {
+      navigate(redirectLink);
+    } else if (user?.accessType === 'jobs') {
+      navigate('/jobs');
+    } else {
+      navigate('/');
+    }
   };
   const login = handleSubmit(async values => {
     setLoading(true);
@@ -44,7 +50,7 @@ const useSignIn = () => {
       });
       if (res.success && res.data?.user) {
         saveSession(res.data.user);
-        redirectUser();
+        redirectUser(res.data.user);
         showNotification({
           message: 'Successfully logged in. Redirecting....',
           variant: 'success'

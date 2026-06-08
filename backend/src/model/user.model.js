@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const { VALID_ACCESS_TYPES, VALID_PERMISSIONS } = require("../constants/access.js");
 
 const userSchema = mongoose.Schema(
   {
@@ -10,8 +11,13 @@ const userSchema = mongoose.Schema(
     },
     accessType: {
       type: String,
-      default: "event",
-      enum: ["event", "admin", "showroom", "website", "superadmin", "sales"],
+      default: "custom",
+      enum: VALID_ACCESS_TYPES,
+    },
+    permissions: {
+      type: [String],
+      default: [],
+      enum: VALID_PERMISSIONS,
     },
     password: {
       type: String,

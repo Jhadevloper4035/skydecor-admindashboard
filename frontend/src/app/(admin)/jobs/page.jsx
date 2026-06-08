@@ -71,6 +71,7 @@ const JobCard = ({ job, onDelete, deleting }) => {
           >
             {deleting ? <Spinner animation="border" size="sm" /> : <IconifyIcon icon="bx:trash" />}
           </button>
+
         </div>
       </Card>
     </Col>

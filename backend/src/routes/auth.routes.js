@@ -2,19 +2,19 @@
 const router = require("express").Router();
 const { register, login, logout, getMe, listUsers, updateUser, deleteUser } = require("../controller/user.controller.js");
 const { authLimiter } = require("../middleware/rateLimiter.js");
-const { protect, requireRole } = require("../middleware/jwt.js");
+const { protect, requirePermission } = require("../middleware/jwt.js");
 
-const superadminOnly = [protect, requireRole("superadmin")];
+const userManagementAccess = [protect, requirePermission("users.manage")];
 
-// Register is admin-only — only a logged-in admin/superadmin can create new users
-router.post("/register", protect, requireRole("admin", "superadmin"), register);
+// Register is protected — admin/superadmin or users.manage can create scoped users
+router.post("/register", ...userManagementAccess, register);
 router.post("/login", authLimiter, login);
 router.post("/logout", logout);
 router.get("/me", protect, getMe);
 
-// User management — superadmin only
-router.get("/users", ...superadminOnly, listUsers);
-router.put("/users/:id", ...superadminOnly, updateUser);
-router.delete("/users/:id", ...superadminOnly, deleteUser);
+// User management
+router.get("/users", ...userManagementAccess, listUsers);
+router.put("/users/:id", ...userManagementAccess, updateUser);
+router.delete("/users/:id", ...userManagementAccess, deleteUser);
 
 module.exports = router;

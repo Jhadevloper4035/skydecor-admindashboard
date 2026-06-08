@@ -8,7 +8,7 @@ import * as yup from 'yup';
 import { useNotificationContext } from '@/context/useNotificationContext';
 import { apiFetch } from '@/helpers/httpClient';
 
-const ACCESS_TYPES = ['admin', 'superadmin', 'event', 'showroom', 'website'];
+const ACCESS_TYPES = ['admin', 'superadmin', 'event', 'showroom', 'website', 'sales', 'jobs'];
 
 const SignUpForm = () => {
   const [loading, setLoading] = useState(false);

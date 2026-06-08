@@ -8,7 +8,7 @@ import { useAuthContext } from '@/context/useAuthContext'
 const AppMenu = lazy(() => import('./components/AppMenu'))
 const VerticalNavigationBar = () => {
   const { user } = useAuthContext()
-  const menuItems = getMenuItems(user?.accessType)
+  const menuItems = getMenuItems(user)
   return (
     <div className="main-nav" id="leftside-menu-container">
       <LogoBox

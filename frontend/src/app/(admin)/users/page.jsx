@@ -6,7 +6,7 @@ import PageMetaData from '@/components/PageTitle'
 import IconifyIcon from '@/components/wrappers/IconifyIcon'
 import useUserManagementStore from '@/store/userManagementStore'
 
-const ACCESS_TYPES = ['superadmin', 'admin', 'website', 'event', 'showroom']
+const ACCESS_TYPES = ['superadmin', 'admin', 'website', 'event', 'showroom', 'sales', 'jobs']
 
 const ACCESS_BADGE = {
   superadmin: 'danger',
@@ -14,6 +14,8 @@ const ACCESS_BADGE = {
   website: 'info',
   event: 'warning',
   showroom: 'success',
+  sales: 'dark',
+  jobs: 'secondary',
 }
 
 const EditModal = ({ user, onClose, onSave }) => {

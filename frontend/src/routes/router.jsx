@@ -5,6 +5,7 @@ import { useAuthContext } from '@/context/useAuthContext';
 import { appRoutes, authRoutes, publicRoutes, ALL_ACCESS_TYPES } from '@/routes/index';
 import AdminLayout from '@/layouts/AdminLayout';
 import Preloader from '@/components/Preloader';
+import { hasAnyPermission } from '@/constants/access';
 
 const AppRouter = props => {
   const { isAuthenticated, user, loading } = useAuthContext();
@@ -18,7 +19,10 @@ const AppRouter = props => {
     if (!isValidUser) {
       return <Navigate to={{ pathname: '/auth/sign-in', search: 'redirectTo=' + route.path }} />;
     }
-    if (route.roles && !route.roles.includes(user.accessType)) {
+    const roleAllowed = !route.roles || route.roles.includes(user.accessType);
+    const permissionAllowed = hasAnyPermission(user, route.permissions || []);
+
+    if (!roleAllowed || !permissionAllowed) {
       return <Navigate to="/error-404" />;
     }
     return <AdminLayout {...props}>{route.element}</AdminLayout>;

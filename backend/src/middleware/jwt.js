@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../model/user.model.js");
+const { ROLE_PERMISSIONS } = require("../constants/access.js");
 
 const generateToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" });
@@ -51,8 +52,33 @@ const requireRole = (...roles) => (req, res, next) => {
   next();
 };
 
+const hasPermission = (user, permission) => {
+  const rolePermissions = ROLE_PERMISSIONS[user.accessType] || [];
+  const explicitPermissions = user.permissions || [];
+
+  return (
+    rolePermissions.includes("*") ||
+    rolePermissions.includes(permission) ||
+    explicitPermissions.includes(permission)
+  );
+};
+
+const requirePermission = (...permissions) => (req, res, next) => {
+  if (!permissions.some((permission) => hasPermission(req.user, permission))) {
+    return res.status(403).json({
+      success: false,
+      status: "forbidden",
+      message: "Access denied: insufficient permissions.",
+    });
+  }
+
+  next();
+};
+
 module.exports = {
   generateToken,
   protect,
   requireRole,
+  requirePermission,
+  hasPermission,
 };

@@ -1,11 +1,18 @@
 import { MENU_ITEMS } from '@/assets/data/menu-items';
+import { hasAnyPermission } from '@/constants/access';
 
 const isAllowed = (item, accessType) =>
   !item.roles || item.roles.includes(accessType);
 
-export const getMenuItems = (accessType) => {
-  if (!accessType) return MENU_ITEMS;
-  return MENU_ITEMS.filter((item) => isAllowed(item, accessType));
+export const getMenuItems = (userOrAccessType) => {
+  const user = typeof userOrAccessType === 'string' ? { accessType: userOrAccessType } : userOrAccessType;
+  if (!user?.accessType) return MENU_ITEMS;
+
+  return MENU_ITEMS.filter((item) => {
+    const roleAllowed = isAllowed(item, user.accessType);
+    const permissionAllowed = hasAnyPermission(user, item.permissions || []);
+    return roleAllowed && permissionAllowed;
+  });
 };
 export const findAllParent = (menuItems, menuItem) => {
   let parents = [];
