@@ -1,7 +1,7 @@
 const path = require("path");
 const Lead = require("../model/lead.model.js");
 const Enquiry = require("../model/enquiry.model.js");
-const Job = require("../model/jobenquriy.model.js");
+const JobApplication = require("../model/jobenquriy.model.js");
 const ProductEnquiry = require("../model/productenquiry.model.js");
 
 const {
@@ -467,7 +467,7 @@ module.exports.getJobApplications = async (req, res) => {
   try {
     const { page, limit, skip } = getPagination(req);
     const { total, documents } = await fetchPaginatedDocuments(
-      Job,
+      JobApplication,
       {},
       { skip, limit }
     );
@@ -495,7 +495,7 @@ module.exports.downloadJobApplications = async (req, res) => {
   try {
     await exportDocumentsToExcel(
       res,
-      Job,
+      JobApplication,
       {},
       "Job-Applications.xlsx"
     );

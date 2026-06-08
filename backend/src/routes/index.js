@@ -8,6 +8,7 @@ const cisrEventAdminRoute = require("./secure/cisrevents.route.js");
 const seoMetaAdminRoute = require("./secure/seo-meta.route.js");
 const qrcodeAdminRoute = require("./secure/qrcode.route.js");
 const showroomAdminRoute = require("./secure/showroom.route.js");
+const jobAdminRoute = require("./secure/job.route.js");
 
 const leadAdminRoute = require("./secure/lead.routes.js");
 const authAdminRoute = require("./auth.routes.js");
@@ -36,5 +37,6 @@ router.use("/events", adminOnly, eventAdminRoute);
 router.use("/cisr-events", adminOnly, cisrEventAdminRoute);
 router.use("/blog", adminOnly, blogAdminRoute);
 router.use("/product", adminOnly, productAdminRoute);
+router.use("/jobs", adminOnly, jobAdminRoute);
 
 module.exports = router;

@@ -77,9 +77,7 @@ const ShowroomLeads = () => {
         <Col xs="auto" className="d-flex gap-2 flex-wrap">
           <Button
             variant="outline-info"
-            href="/showroom-lead"
-            target="_blank"
-            rel="noopener noreferrer"
+            onClick={() => navigate('/showroom-lead')}
           >
             Add New Lead
           </Button>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Col, Container, Row, Spinner } from 'react-bootstrap'
 import ReactSelect from 'react-select'
 import { apiFetch } from '@/helpers/httpClient'
@@ -834,6 +834,9 @@ const labelStyle = { color: '#dee2e6', fontSize: 14, marginBottom: 6, display: '
 
 const ShowroomLeadForm = () => {
   const navigate = useNavigate()
+  const { eventSlug } = useParams()
+  const eventName = eventSlug ? decodeURIComponent(eventSlug) : ''
+  const isEventLead = Boolean(eventName)
   const [form, setForm] = useState(INITIAL)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -854,15 +857,24 @@ const ShowroomLeadForm = () => {
     }
     setSubmitting(true)
     try {
-      await apiFetch('/api/lead/showroom/contact-form-submit', {
+      const submitUrl = isEventLead
+        ? `/api/lead/event/contact-form-submit/${encodeURIComponent(eventName)}`
+        : '/api/lead/showroom/contact-form-submit'
+
+      await apiFetch(submitUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          place: eventName || form.place,
+        }),
       })
       navigate('/thank-you', {
         state: {
-          message: 'Your showroom enquiry has been submitted successfully. Our team will get in touch with you shortly.',
-          backPath: '/showroom-lead',
+          message: isEventLead
+            ? `Your enquiry for ${eventName} has been submitted successfully. Our team will get in touch with you shortly.`
+            : 'Your showroom enquiry has been submitted successfully. Our team will get in touch with you shortly.',
+          backPath: isEventLead ? `/event-lead/${encodeURIComponent(eventName)}` : '/showroom-lead',
           backLabel: 'Submit Another Enquiry',
         },
       })
@@ -893,7 +905,7 @@ const ShowroomLeadForm = () => {
           <Col xs={12} md={10} lg={6} xl={6}>
             <div style={{ backgroundColor: '#282f36', borderRadius: 12, padding: '36px 40px' }}>
               <h2 style={{ color: '#fff', textAlign: 'center', fontWeight: 400, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 40 }}>
-                Showroom Visit
+                {isEventLead ? eventName : 'Showroom Visit'}
               </h2>
 
               {error && (

@@ -8,11 +8,11 @@ import RecentLeads from './components/RecentLeads';
 import QRCodeStats from './components/QRCodeStats';
 import ShowroomLeadsChart from './components/ShowroomLeadsChart';
 
-export default function Analytics() {
+export default function Dashboard() {
   return (
     <>
-      <PageBreadcrumb title="Analytics" subName="Dashboards" />
-      <PageMetaData title="Analytics" />
+      <PageBreadcrumb title="Dashboard" subName="General" />
+      <PageMetaData title="Dashboard" />
 
       {/* Row 1 — 6 summary stat cards */}
       <SummaryCards />

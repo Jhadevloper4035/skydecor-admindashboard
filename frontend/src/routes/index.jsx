@@ -7,9 +7,7 @@ const ShowroomLeadForm = lazy(() => import('@/app/(public)/showroom-lead/page'))
 const ThankYou = lazy(() => import('@/app/(public)/thank-you/page'))
 
 // Dashboard Routes
-const Analytics = lazy(() => import('@/app/(admin)/dashboard/analytics/page'))
-const Finance = lazy(() => import('@/app/(admin)/dashboard/finance/page'))
-const Sales = lazy(() => import('@/app/(admin)/dashboard/sales/page'))
+const Dashboard = lazy(() => import('@/app/(admin)/dashboard/analytics/page'))
 
 // Ecommerce Routes
 const EcommerceProductDetails = lazy(() => import('@/app/(admin)/ecommerce/products/[productId]/page'))
@@ -45,6 +43,12 @@ const BlogCreate = lazy(() => import('@/app/(admin)/blogs/create/page'))
 const BlogDetail = lazy(() => import('@/app/(admin)/blogs/[blogId]/page'))
 const BlogEdit = lazy(() => import('@/app/(admin)/blogs/[blogId]/edit/page'))
 
+// Job Routes
+const Jobs = lazy(() => import('@/app/(admin)/jobs/page'))
+const JobCreate = lazy(() => import('@/app/(admin)/jobs/create/page'))
+const JobDetail = lazy(() => import('@/app/(admin)/jobs/[jobId]/page'))
+const JobEdit = lazy(() => import('@/app/(admin)/jobs/[jobId]/edit/page'))
+
 // Leads Routes
 const ShowroomLeads = lazy(() => import('@/app/(admin)/showroom-leads/page'))
 const AddShowroomLead = lazy(() => import('@/app/(admin)/showroom-leads/add/page'))
@@ -67,7 +71,7 @@ const initialRoutes = [
   {
     path: '/',
     name: 'root',
-    element: <Navigate to="/dashboard/analytics" />,
+    element: <Navigate to="/dashboard" />,
   },
   {
     path: '*',
@@ -86,19 +90,14 @@ export const ALL_ACCESS_TYPES = ['event', 'admin', 'showroom', 'website', 'super
 
 const generalRoutes = [
   {
+    path: '/dashboard',
+    name: 'Dashboard',
+    element: <Dashboard />,
+  },
+  {
     path: '/dashboard/analytics',
-    name: 'Analytics',
-    element: <Analytics />,
-  },
-  {
-    path: '/dashboard/finance',
-    name: 'Finance',
-    element: <Finance />,
-  },
-  {
-    path: '/dashboard/sales',
-    name: 'Sales',
-    element: <Sales />,
+    name: 'Dashboard Redirect',
+    element: <Navigate to="/dashboard" />,
   },
 ]
 
@@ -200,6 +199,30 @@ const customRoutes = [
     name: 'Blog Edit',
     path: '/blogs/:blogId/edit',
     element: <BlogEdit />,
+    roles: ['admin', 'superadmin'],
+  },
+  {
+    name: 'Jobs',
+    path: '/jobs',
+    element: <Jobs />,
+    roles: ['admin', 'superadmin'],
+  },
+  {
+    name: 'Job Create',
+    path: '/jobs/create',
+    element: <JobCreate />,
+    roles: ['admin', 'superadmin'],
+  },
+  {
+    name: 'Job Detail',
+    path: '/jobs/:jobId',
+    element: <JobDetail />,
+    roles: ['admin', 'superadmin'],
+  },
+  {
+    name: 'Job Edit',
+    path: '/jobs/:jobId/edit',
+    element: <JobEdit />,
     roles: ['admin', 'superadmin'],
   },
   {
@@ -338,6 +361,11 @@ export const publicRoutes = [
   {
     name: 'Showroom Lead Form',
     path: '/showroom-lead',
+    element: <ShowroomLeadForm />,
+  },
+  {
+    name: 'Event Lead Form',
+    path: '/event-lead/:eventSlug',
     element: <ShowroomLeadForm />,
   },
   {

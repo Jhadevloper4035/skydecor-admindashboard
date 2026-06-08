@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import PageBreadcrumb from '@/components/layout/PageBreadcrumb'
 import PageMetaData from '@/components/PageTitle'
 import { Col, Row, Button } from 'react-bootstrap'
@@ -10,6 +10,7 @@ import EventLeadsTable from './components/EventLeadTable'
 import { StatCard } from '../../dashboard/analytics/components/Stats'
 
 const EventLeads = () => {
+  const navigate = useNavigate()
   const { eventSlug } = useParams()
   const { leads, fetchLeads } = useEventLeadsStore()
 
@@ -58,8 +59,6 @@ const EventLeads = () => {
     }
   }
 
-  const handleAddNewLead = handleDownloadExcel
-
   return (
     <>
       <PageBreadcrumb subName="Pages" title={`Event Leads - ${place}`} />
@@ -76,8 +75,8 @@ const EventLeads = () => {
       </Row>
 
       <Row className="mb-4 justify-content-end">
-        <Col xs="auto">
-          <Button variant="primary" className="me-2" onClick={handleAddNewLead}>
+        <Col xs="auto" className="d-flex gap-2 flex-wrap">
+          <Button variant="outline-info" onClick={() => navigate(`/event-lead/${encodeURIComponent(place)}`)}>
             Add New Lead
           </Button>
           <Button variant="success" onClick={handleDownloadExcel} disabled={downloading}>

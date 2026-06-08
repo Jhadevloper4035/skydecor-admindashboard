@@ -6,17 +6,10 @@ export const MENU_ITEMS = [
     isTitle: true,
   },
   {
-    key: 'dashboards',
+    key: 'dashboard',
     icon: 'iconamoon:home-duotone',
-    label: 'Dashboards',
-    children: [
-      {
-        key: 'dashboard-analytics',
-        label: 'Analytics',
-        url: '/dashboard/analytics',
-        parentKey: 'dashboards',
-      }
-    ],
+    label: 'Dashboard',
+    url: '/dashboard',
   },
 
 
@@ -33,8 +26,21 @@ export const MENU_ITEMS = [
     key: 'showroom-leads',
     icon: 'iconamoon:comment-dots-duotone',
     label: 'Showroom Leads',
-    url: '/showroom-leads',
     roles: ['admin', 'superadmin', 'event'],
+    children: [
+      {
+        key: 'showroom-leads-list',
+        label: 'All Leads',
+        url: '/showroom-leads',
+        parentKey: 'showroom-leads',
+      },
+      {
+        key: 'showroom-leads-add',
+        label: 'Add New Lead',
+        url: '/showroom-lead',
+        parentKey: 'showroom-leads',
+      },
+    ],
   },
 
   // ── Leads ──────────────────────────────────────────────────────────────────
@@ -155,6 +161,25 @@ export const MENU_ITEMS = [
         label: 'Create Blog',
         url: '/blogs/create',
         parentKey: 'blogs',
+      },
+    ],
+  },
+  {
+    key: 'jobs',
+    icon: 'iconamoon:profile-circle-duotone',
+    label: 'Jobs',
+    children: [
+      {
+        key: 'jobs-list',
+        label: 'All Jobs',
+        url: '/jobs',
+        parentKey: 'jobs',
+      },
+      {
+        key: 'jobs-create',
+        label: 'Create Job',
+        url: '/jobs/create',
+        parentKey: 'jobs',
       },
     ],
   },

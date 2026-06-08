@@ -1,7 +1,21 @@
-
 name: skydecor-dev
 
 services:
+
+  # ── MongoDB ──────────────────────────────────────────────────────────────────
+  mongo:
+    container_name: skydecor-mongo-dev
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - skydecor-mongo-dev-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - skydecor-dev-net
 
   # ── Backend ──────────────────────────────────────────────────────────────────
   backend:
@@ -10,18 +24,22 @@ services:
       context: ./backend
       target: development
     restart: unless-stopped
-    dns:
-      - 8.8.8.8
-      - 8.8.4.4
     env_file:
       - ./backend/.env.development
     environment:
       NODE_ENV: development
+      DATABASE_URL: "mongodb://mongo:27017"
+      DBNAME: skydecor-dev
       ALLOWED_ORIGINS: "http://localhost:5173"
+      DEV_ADMIN_NAME: "admin"
+      DEV_ADMIN_PASSWORD: "admin12345"
     ports:
       - "8000:8000"               # exposed to host for direct API access / debugging
     volumes:
       - ./backend/src:/app/src
+    depends_on:
+      mongo:
+        condition: service_healthy
     networks:
       - skydecor-dev-net
 
@@ -47,9 +65,9 @@ services:
     networks:
       - skydecor-dev-net
 
-      
-
 networks:
   skydecor-dev-net:
     driver: bridge
 
+volumes:
+  skydecor-mongo-dev-data:
