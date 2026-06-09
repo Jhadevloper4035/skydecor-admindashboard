@@ -6,6 +6,7 @@ import * as yup from 'yup';
 import { useAuthContext } from '@/context/useAuthContext';
 import { useNotificationContext } from '@/context/useNotificationContext';
 import { apiFetch } from '@/helpers/httpClient';
+import { getDefaultPathForUser } from '@/constants/access';
 const useSignIn = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -34,10 +35,8 @@ const useSignIn = () => {
     const redirectLink = searchParams.get('redirectTo');
     if (redirectLink) {
       navigate(redirectLink);
-    } else if (user?.accessType === 'jobs') {
-      navigate('/jobs');
     } else {
-      navigate('/');
+      navigate(getDefaultPathForUser(user));
     }
   };
   const login = handleSubmit(async values => {

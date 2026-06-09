@@ -1,6 +1,6 @@
 
 const router = require("express").Router();
-const { register, login, logout, getMe, listUsers, updateUser, deleteUser } = require("../controller/user.controller.js");
+const { register, login, logout, getMe, changePassword, listUsers, updateUser, deleteUser } = require("../controller/user.controller.js");
 const { authLimiter } = require("../middleware/rateLimiter.js");
 const { protect, requirePermission } = require("../middleware/jwt.js");
 
@@ -11,6 +11,7 @@ router.post("/register", ...userManagementAccess, register);
 router.post("/login", authLimiter, login);
 router.post("/logout", logout);
 router.get("/me", protect, getMe);
+router.put("/change-password", protect, changePassword);
 
 // User management
 router.get("/users", ...userManagementAccess, listUsers);

@@ -149,8 +149,8 @@ const AddShowroomLead = () => {
 
   return (
     <>
-      <PageMetaData title="Add Showroom Lead" />
-      <PageBreadcrumb title="Add Showroom Lead" subName="Showroom Leads" />
+      <PageMetaData title="Add Showroom Enquiry" />
+      <PageBreadcrumb title="Add Showroom Enquiry" subName="Showroom Enquiry" />
 
       <Row>
         <Col>

@@ -48,7 +48,7 @@ const JobApplications = () => {
   const handleDownloadExcel = async () => {
     setDownloading(true)
     try {
-      await downloadExcel('/api/lead/job-application/download', 'Job-Applications.xlsx')
+      await downloadExcel('/api/lead/job-application/download', 'Job-Enquiry.xlsx')
     } finally {
       setDownloading(false)
     }
@@ -56,8 +56,8 @@ const JobApplications = () => {
 
   return (
     <>
-      <PageBreadcrumb subName="Website Apps" title="Job Applications" />
-      <PageMetaData title="Job Applications" />
+      <PageBreadcrumb subName="Website Apps" title="Job Enquiry" />
+      <PageMetaData title="Job Enquiry" />
 
       <Row className="mb-4">
         {stats.map((stat, idx) => (

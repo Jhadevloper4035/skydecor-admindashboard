@@ -4,13 +4,15 @@ import { useReactTable, getCoreRowModel, getFilteredRowModel, getPaginationRowMo
 import PageBreadcrumb from '@/components/layout/PageBreadcrumb'
 import PageMetaData from '@/components/PageTitle'
 import IconifyIcon from '@/components/wrappers/IconifyIcon'
+import AccessPermissionSelector from '@/components/AccessPermissionSelector'
+import { ACCESS_TYPES } from '@/constants/access'
+import { useAuthContext } from '@/context/useAuthContext'
 import useUserManagementStore from '@/store/userManagementStore'
-
-const ACCESS_TYPES = ['superadmin', 'admin', 'website', 'event', 'showroom', 'sales', 'jobs']
 
 const ACCESS_BADGE = {
   superadmin: 'danger',
   admin: 'primary',
+  custom: 'secondary',
   website: 'info',
   event: 'warning',
   showroom: 'success',
@@ -18,15 +20,16 @@ const ACCESS_BADGE = {
   jobs: 'secondary',
 }
 
-const EditModal = ({ user, onClose, onSave }) => {
+const EditModal = ({ user, onClose, onSave, accessTypeOptions }) => {
   const [name, setName] = useState(user.name)
-  const [accessType, setAccessType] = useState(user.accessType)
+  const [accessType, setAccessType] = useState(user.accessType || 'custom')
+  const [permissions, setPermissions] = useState(user.permissions || [])
   const [password, setPassword] = useState('')
   const [saving, setSaving] = useState(false)
 
   const handleSave = async () => {
     setSaving(true)
-    const payload = { name, accessType }
+    const payload = { name, accessType, permissions }
     if (password) payload.password = password
     const ok = await onSave(user._id, payload)
     setSaving(false)
@@ -46,10 +49,14 @@ const EditModal = ({ user, onClose, onSave }) => {
         <Form.Group className="mb-3">
           <Form.Label>Access Type</Form.Label>
           <Form.Select value={accessType} onChange={(e) => setAccessType(e.target.value)}>
-            {ACCESS_TYPES.map((t) => (
+            {accessTypeOptions.map((t) => (
               <option key={t} value={t}>{t}</option>
             ))}
           </Form.Select>
+        </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>Page Access</Form.Label>
+          <AccessPermissionSelector value={permissions} onChange={setPermissions} disabled={saving} />
         </Form.Group>
         <Form.Group className="mb-3">
           <Form.Label>New Password</Form.Label>
@@ -101,6 +108,7 @@ const DeleteModal = ({ user, onClose, onConfirm }) => {
 
 const UsersPage = () => {
   const { users, loading, error, fetchUsers, updateUser, deleteUser } = useUserManagementStore()
+  const { user: currentUser } = useAuthContext()
   const [globalFilter, setGlobalFilter] = useState('')
   const [sorting, setSorting] = useState([])
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 20 })
@@ -108,6 +116,13 @@ const UsersPage = () => {
   const [deleteTarget, setDeleteTarget] = useState(null)
 
   useEffect(() => { fetchUsers() }, [fetchUsers])
+
+  const accessTypeOptions = useMemo(
+    () => currentUser?.accessType === 'superadmin'
+      ? ACCESS_TYPES
+      : ACCESS_TYPES.filter((type) => !['admin', 'superadmin'].includes(type)),
+    [currentUser?.accessType]
+  )
 
   const columns = useMemo(() => [
     {
@@ -126,6 +141,16 @@ const UsersPage = () => {
       cell: ({ getValue }) => {
         const val = getValue()
         return <span className={`badge bg-${ACCESS_BADGE[val] ?? 'secondary'}`}>{val}</span>
+      },
+    },
+    {
+      accessorKey: 'permissions',
+      header: 'Page Access',
+      enableSorting: false,
+      cell: ({ getValue }) => {
+        const permissions = getValue() || []
+        if (permissions.length === 0) return <span className="text-muted">Preset only</span>
+        return <span className="badge bg-light text-dark border">{permissions.length} selected</span>
       },
     },
     {
@@ -252,6 +277,7 @@ const UsersPage = () => {
           user={editTarget}
           onClose={() => setEditTarget(null)}
           onSave={updateUser}
+          accessTypeOptions={accessTypeOptions}
         />
       )}
       {deleteTarget && (

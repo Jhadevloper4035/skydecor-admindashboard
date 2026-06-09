@@ -7,6 +7,7 @@ import LeadStatusCharts from './components/LeadStatusCharts';
 import RecentLeads from './components/RecentLeads';
 import QRCodeStats from './components/QRCodeStats';
 import ShowroomLeadsChart from './components/ShowroomLeadsChart';
+import ContentHighlights from './components/ContentHighlights';
 
 export default function Dashboard() {
   return (
@@ -17,7 +18,10 @@ export default function Dashboard() {
       {/* Row 1 — 6 summary stat cards */}
       <SummaryCards />
 
-      {/* Row 2 — Lead source donut + status breakdown */}
+      {/* Row 2 — Recent content and active jobs */}
+      <ContentHighlights />
+
+      {/* Row 3 — Lead source donut + status breakdown */}
       <Row className="g-3 mb-3">
         <Col xl={8}>
           <LeadSourceChart />
@@ -27,7 +31,7 @@ export default function Dashboard() {
         </Col>
       </Row>
 
-      {/* Row 3 — Recent leads table + QR code stats */}
+      {/* Row 4 — Recent leads table + QR code stats */}
       <Row className="g-3 mb-3">
         <Col xl={7}>
           <RecentLeads />
@@ -37,7 +41,7 @@ export default function Dashboard() {
         </Col>
       </Row>
 
-      {/* Row 4 — Showroom and event leads by location */}
+      {/* Row 5 — Showroom and event leads by location */}
       <Row className="g-3">
         <Col xl={12}>
           <ShowroomLeadsChart />

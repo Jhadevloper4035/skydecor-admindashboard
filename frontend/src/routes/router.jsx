@@ -5,7 +5,8 @@ import { useAuthContext } from '@/context/useAuthContext';
 import { appRoutes, authRoutes, publicRoutes, ALL_ACCESS_TYPES } from '@/routes/index';
 import AdminLayout from '@/layouts/AdminLayout';
 import Preloader from '@/components/Preloader';
-import { hasAnyPermission } from '@/constants/access';
+import { getDefaultPathForUser, hasAnyPermission } from '@/constants/access';
+import PermissionDenied from '@/app/(admin)/permission-denied/page';
 
 const AppRouter = props => {
   const { isAuthenticated, user, loading } = useAuthContext();
@@ -19,11 +20,19 @@ const AppRouter = props => {
     if (!isValidUser) {
       return <Navigate to={{ pathname: '/auth/sign-in', search: 'redirectTo=' + route.path }} />;
     }
-    const roleAllowed = !route.roles || route.roles.includes(user.accessType);
+    if (route.path === '/') {
+      const defaultPath = getDefaultPathForUser(user);
+      if (defaultPath === '/error-404') {
+        return <AdminLayout {...props}><PermissionDenied routeName="Dashboard" /></AdminLayout>;
+      }
+      return <Navigate to={defaultPath} replace />;
+    }
+    const hasPermissionRule = Array.isArray(route.permissions) && route.permissions.length > 0;
+    const roleAllowed = hasPermissionRule || !route.roles || route.roles.includes(user.accessType);
     const permissionAllowed = hasAnyPermission(user, route.permissions || []);
 
     if (!roleAllowed || !permissionAllowed) {
-      return <Navigate to="/error-404" />;
+      return <AdminLayout {...props}><PermissionDenied routeName={route.name} /></AdminLayout>;
     }
     return <AdminLayout {...props}>{route.element}</AdminLayout>;
   };

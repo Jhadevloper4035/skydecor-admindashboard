@@ -7,16 +7,17 @@ const SignUp = () => {
   return <>
       <PageMetaData title="Sign Up" />
 
-      <Card className="auth-card">
+      <Card className="overflow-hidden">
         <CardBody className="p-0">
-          <Row className="align-items-center g-0">
-            <Col lg={6} className="d-none d-lg-inline-block border-end">
-              <div className="auth-page-sidebar">
-                <img src={signUpImg} width={521} height={521} alt="auth" className="img-fluid" />
+          <Row className="align-items-stretch g-0" style={{ minHeight: 'calc(100vh - 180px)' }}>
+            <Col xl={5} lg={6} className="d-none d-lg-flex border-end">
+              <div className="auth-page-sidebar d-flex align-items-center justify-content-center w-100 p-4">
+                <img src={signUpImg} width={521} height={521} alt="Create user" className="img-fluid" />
               </div>
             </Col>
-            <Col lg={6}>
-              <div className="p-4">
+            <Col xl={7} lg={6}>
+              <div className="h-100 d-flex align-items-center justify-content-center p-4 p-xl-5">
+                <div className="w-100" style={{ maxWidth: 720 }}>
                 <LogoBox textLogo={{
                 height: 24,
                 width: 73
@@ -25,11 +26,8 @@ const SignUp = () => {
               }} containerClassName="mx-auto mb-4 text-center auth-logo" />
                 <h2 className="fw-bold text-center fs-18">Create User</h2>
                 <p className="text-muted text-center mt-1 mb-4">Create a new user account and assign their access level.</p>
-                <Row className="justify-content-center">
-                  <Col xs={12} md={8}>
-                    <SignUpForm />
-                  </Col>
-                </Row>
+                <SignUpForm />
+                </div>
               </div>
             </Col>
           </Row>

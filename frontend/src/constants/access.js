@@ -12,10 +12,10 @@ export const SERVICE_PERMISSIONS = [
   { value: 'qrCodes.manage', label: 'QR Codes' },
   { value: 'websiteLeads.manage', label: 'Website Leads' },
   { value: 'productEnquiries.view', label: 'Product Enquiries' },
-  { value: 'jobApplications.view', label: 'Job Applications' },
+  { value: 'jobApplications.view', label: 'Job Enquiry' },
   { value: 'jobs.manage', label: 'Job Posts' },
-  { value: 'eventLeads.view', label: 'Event Leads' },
-  { value: 'showroomLeads.manage', label: 'Showroom Leads' },
+  { value: 'eventLeads.view', label: 'Events Enquiry' },
+  { value: 'showroomLeads.manage', label: 'Showroom Enquiry' },
 ];
 
 const ROLE_PERMISSIONS = {

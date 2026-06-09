@@ -4,11 +4,11 @@ import IconifyIcon from '@/components/wrappers/IconifyIcon';
 import { apiFetch } from '@/helpers/httpClient';
 
 const CARDS = [
-  { key: 'eventLeads',       label: 'Event Leads',        icon: 'bx:calendar-event',  color: 'primary'   },
-  { key: 'showroomLeads',    label: 'Showroom Leads',      icon: 'bx:store',           color: 'info'      },
+  { key: 'eventLeads',       label: 'Events Enquiry',      icon: 'bx:calendar-event',  color: 'primary'   },
+  { key: 'showroomLeads',    label: 'Showroom Enquiry',    icon: 'bx:store',           color: 'info'      },
   { key: 'websiteLeads',     label: 'Website Enquiries',   icon: 'bx:globe',           color: 'success'   },
   { key: 'productEnquiries', label: 'Product Enquiries',   icon: 'bx:package',         color: 'warning'   },
-  { key: 'jobApplications',  label: 'Job Applications',    icon: 'bx:briefcase',       color: 'danger'    },
+  { key: 'jobApplications',  label: 'Job Enquiry',         icon: 'bx:briefcase',       color: 'danger'    },
   { key: 'qrScans',          label: 'Total QR Scans',      icon: 'bx:qr',             color: 'secondary' },
 ];
 

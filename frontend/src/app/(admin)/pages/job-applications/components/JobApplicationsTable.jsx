@@ -100,7 +100,7 @@ const JobApplicationsTable = () => {
     <Card className="overflow-hidden">
       <Card.Header>
         <div className="d-flex justify-content-between align-items-center">
-          <h5 className="mb-0">Job Applications</h5>
+          <h5 className="mb-0">Job Enquiry</h5>
           <InputGroup style={{ width: '300px' }}>
             <Form.Control
               type="text"

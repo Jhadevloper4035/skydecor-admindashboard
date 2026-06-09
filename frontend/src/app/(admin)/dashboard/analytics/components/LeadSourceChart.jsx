@@ -3,22 +3,21 @@ import { Card, CardBody, Col, Row, Spinner } from 'react-bootstrap';
 import ReactApexChart from 'react-apexcharts';
 import { apiFetch } from '@/helpers/httpClient';
 
-const COLORS  = ['#727cf5', '#0acf97', '#39afd1', '#fd7e14', '#fa5c7c'];
-const SOURCES = ['Event Leads', 'Showroom Leads', 'Website Enquiries', 'Product Enquiries', 'Job Applications'];
+const COLORS  = ['#727cf5', '#0acf97', '#39afd1', '#fd7e14'];
+const SOURCES = ['Events Enquiry', 'Showroom Enquiry', 'Website Enquiries', 'Product Enquiries'];
 
 const LeadSourceChart = () => {
-  const [counts, setCounts]   = useState([0, 0, 0, 0, 0]);
+  const [counts, setCounts]   = useState([0, 0, 0, 0]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
       try {
-        const [allLeads, showroom, website, product, jobs] = await Promise.allSettled([
+        const [allLeads, showroom, website, product] = await Promise.allSettled([
           apiFetch('/api/lead/all-leads'),
           apiFetch('/api/lead/showroom?limit=1'),
           apiFetch('/api/lead/contactleads?limit=1'),
           apiFetch('/api/lead/productEnquiry?limit=1'),
-          apiFetch('/api/lead/jobapplications?limit=1'),
         ]);
 
         const val = (r) => (r.status === 'fulfilled' ? r.value : null);
@@ -32,7 +31,6 @@ const LeadSourceChart = () => {
           val(showroom)?.total  ?? 0,
           val(website)?.total   ?? 0,
           val(product)?.total   ?? 0,
-          val(jobs)?.total      ?? 0,
         ]);
       } finally {
         setLoading(false);

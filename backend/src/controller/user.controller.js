@@ -66,9 +66,6 @@ exports.register = async (req, res) => {
     }
 
     const user = await User.create({ name, password, accessType, permissions });
-    const token = generateToken(user._id);
-
-    res.cookie("token", token, cookieOptions());
 
     return res.status(201).json({
       success: true,
@@ -155,6 +152,55 @@ exports.getMe = (req, res) => {
       user: userPayload(req.user),
     },
   });
+};
+
+// PUT /api/auth/change-password — logged-in user changes own password
+exports.changePassword = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({
+      success: false,
+      status: "validation_error",
+      message: "Current password and new password are required.",
+    });
+  }
+
+  if (newPassword.length < 8) {
+    return res.status(400).json({
+      success: false,
+      status: "validation_error",
+      message: "New password must be at least 8 characters.",
+    });
+  }
+
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found." });
+    }
+
+    const currentPasswordMatches = await user.matchPassword(currentPassword);
+    if (!currentPasswordMatches) {
+      return res.status(400).json({
+        success: false,
+        status: "invalid_current_password",
+        message: "Current password is incorrect.",
+      });
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      status: "password_changed",
+      message: "Password changed successfully.",
+    });
+  } catch (error) {
+    console.error("Change password error:", error);
+    return res.status(500).json({ success: false, message: "Failed to change password." });
+  }
 };
 
 // GET /api/auth/users — superadmin: list all users

@@ -53,7 +53,7 @@ const EventLeads = () => {
   const handleDownloadExcel = async () => {
     setDownloading(true)
     try {
-      await downloadExcel(`/api/lead/event/download/${place}`, `Event-Leads-${place}.xlsx`)
+      await downloadExcel(`/api/lead/event/download/${place}`, `Events-Enquiry-${place}.xlsx`)
     } finally {
       setDownloading(false)
     }
@@ -61,8 +61,8 @@ const EventLeads = () => {
 
   return (
     <>
-      <PageBreadcrumb subName="Pages" title={`Event Leads - ${place}`} />
-      <PageMetaData title={`Event Leads ${place} `} />
+      <PageBreadcrumb subName="Pages" title={`Events Enquiry - ${place}`} />
+      <PageMetaData title={`Events Enquiry ${place} `} />
 
    
 

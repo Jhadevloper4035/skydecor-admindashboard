@@ -50,7 +50,7 @@ const ShowroomLeads = () => {
   const handleDownloadExcel = async () => {
     setDownloading(true)
     try {
-      await downloadExcel('/api/lead/showroom/download', 'Showroom-Leads.xlsx')
+      await downloadExcel('/api/lead/showroom/download', 'Showroom-Enquiry.xlsx')
     } finally {
       setDownloading(false)
     }
@@ -58,8 +58,8 @@ const ShowroomLeads = () => {
 
   return (
     <>
-      <PageBreadcrumb subName="Pages" title="Showroom Leads" />
-      <PageMetaData title="Showroom Leads" />
+      <PageBreadcrumb subName="Pages" title="Showroom Enquiry" />
+      <PageMetaData title="Showroom Enquiry" />
 
         {/* <LeadHero /> */}
 

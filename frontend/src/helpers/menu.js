@@ -4,15 +4,25 @@ import { hasAnyPermission } from '@/constants/access';
 const isAllowed = (item, accessType) =>
   !item.roles || item.roles.includes(accessType);
 
+const filterMenuItem = (item, user, inheritedPermissions = []) => {
+  const effectivePermissions = item.permissions || inheritedPermissions;
+  const children = (item.children || [])
+    .map((child) => filterMenuItem(child, user, effectivePermissions))
+    .filter(Boolean);
+  const hasPermissionRule = effectivePermissions.length > 0;
+  const roleAllowed = hasPermissionRule || isAllowed(item, user.accessType);
+  const permissionAllowed = hasAnyPermission(user, effectivePermissions);
+
+  if (children.length > 0) return { ...item, children };
+  if (roleAllowed && permissionAllowed) return { ...item, children: undefined };
+  return null;
+};
+
 export const getMenuItems = (userOrAccessType) => {
   const user = typeof userOrAccessType === 'string' ? { accessType: userOrAccessType } : userOrAccessType;
   if (!user?.accessType) return MENU_ITEMS;
 
-  return MENU_ITEMS.filter((item) => {
-    const roleAllowed = isAllowed(item, user.accessType);
-    const permissionAllowed = hasAnyPermission(user, item.permissions || []);
-    return roleAllowed && permissionAllowed;
-  });
+  return MENU_ITEMS.map((item) => filterMenuItem(item, user)).filter(Boolean);
 };
 export const findAllParent = (menuItems, menuItem) => {
   let parents = [];

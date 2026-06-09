@@ -85,7 +85,7 @@ const ShowroomLeadsChart = () => {
       <CardBody>
         <div className="d-flex justify-content-between align-items-center mb-3">
           <div>
-            <h5 className="card-title mb-0">Showroom &amp; Event Leads Analysis</h5>
+            <h5 className="card-title mb-0">Showroom &amp; Events Enquiry Analysis</h5>
             <p className="text-muted fs-13 mb-0">
               {leads.length.toLocaleString()} leads — by city, user type, and product interest
             </p>

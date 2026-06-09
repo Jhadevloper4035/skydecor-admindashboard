@@ -5,6 +5,7 @@ export const MENU_ITEMS = [
     label: 'General',
     isTitle: true,
     roles: ['admin', 'superadmin', 'event', 'showroom', 'website', 'sales'],
+    permissions: ['dashboard.view'],
   },
   {
     key: 'dashboard',
@@ -12,14 +13,16 @@ export const MENU_ITEMS = [
     label: 'Dashboard',
     url: '/dashboard',
     roles: ['admin', 'superadmin', 'event', 'showroom', 'website', 'sales'],
+    permissions: ['dashboard.view'],
   },
 
 
-    {
+  {
     key: 'showroom-leads-section',
-    label: 'Leads',
+    label: 'Showroom Enquiry',
     isTitle: true,
     roles: ['admin', 'superadmin', 'event'],
+    permissions: ['showroomLeads.manage'],
   },
 
 
@@ -27,30 +30,32 @@ export const MENU_ITEMS = [
   {
     key: 'showroom-leads',
     icon: 'iconamoon:comment-dots-duotone',
-    label: 'Showroom Leads',
+    label: 'Showroom Enquiry',
     roles: ['admin', 'superadmin', 'event'],
+    permissions: ['showroomLeads.manage'],
     children: [
       {
         key: 'showroom-leads-list',
-        label: 'All Leads',
+        label: 'All Enquiries',
         url: '/showroom-leads',
         parentKey: 'showroom-leads',
       },
       {
         key: 'showroom-leads-add',
-        label: 'Add New Lead',
+        label: 'Add New Enquiry',
         url: '/showroom-lead',
         parentKey: 'showroom-leads',
       },
     ],
   },
 
-  // ── Leads ──────────────────────────────────────────────────────────────────
+  // ── Event Enquiries ────────────────────────────────────────────────────────
   {
     key: 'leads',
     icon: 'iconamoon:comment-dots-duotone',
-    label: 'Leads',
+    label: 'Events Enquiry',
     roles: ['admin', 'superadmin', 'event'],
+    permissions: ['eventLeads.view'],
     children: [
       {
         key: 'event-lead-1',
@@ -97,6 +102,7 @@ export const MENU_ITEMS = [
     label: 'Website Apps',
     isTitle: true,
     roles: ['admin', 'superadmin', 'website', 'sales', 'jobs'],
+    permissions: ['websiteLeads.manage', 'productEnquiries.view', 'jobApplications.view', 'qrCodes.manage'],
   },
   {
     key: 'website-leads',
@@ -104,6 +110,7 @@ export const MENU_ITEMS = [
     label: 'Website Leads',
     url: '/pages/website-leads',
     roles: ['admin', 'superadmin', 'website', 'sales'],
+    permissions: ['websiteLeads.manage'],
   },
   {
     key: 'product-enquiries',
@@ -111,13 +118,15 @@ export const MENU_ITEMS = [
     label: 'Product Enquiries',
     url: '/pages/product-enquiries',
     roles: ['admin', 'superadmin', 'website', 'sales'],
+    permissions: ['productEnquiries.view'],
   },
   {
     key: 'job-applications',
     icon: 'iconamoon:profile-circle-duotone',
-    label: 'Job Applications',
+    label: 'Job Enquiry',
     url: '/pages/job-applications',
     roles: ['admin', 'superadmin', 'website', 'sales', 'jobs'],
+    permissions: ['jobApplications.view'],
   },
   {
     key: 'qr-codes',
@@ -125,6 +134,7 @@ export const MENU_ITEMS = [
     label: 'Qr Codes',
     url: '/pages/qr-codes',
     roles: ['admin', 'superadmin', 'website', 'sales'],
+    permissions: ['qrCodes.manage'],
   },
 
   // ── Website Utilities ─────────────────────────────────────────────────────
@@ -133,12 +143,14 @@ export const MENU_ITEMS = [
     label: 'Website Utilities',
     isTitle: true,
     roles: ['admin', 'superadmin', 'jobs'],
+    permissions: ['products.manage', 'blogs.manage', 'jobs.manage', 'events.manage', 'cisrEvents.manage', 'showrooms.manage', 'seoMeta.manage'],
   },
   {
     key: 'products',
     icon: 'iconamoon:shopping-bag-duotone',
     label: 'Products',
     roles: ['admin', 'superadmin'],
+    permissions: ['products.manage'],
     children: [
       {
         key: 'products-list',
@@ -159,6 +171,7 @@ export const MENU_ITEMS = [
     icon: 'iconamoon:edit-duotone',
     label: 'Blogs',
     roles: ['admin', 'superadmin'],
+    permissions: ['blogs.manage'],
     children: [
       {
         key: 'blogs-list',
@@ -177,8 +190,9 @@ export const MENU_ITEMS = [
   {
     key: 'jobs',
     icon: 'iconamoon:profile-circle-duotone',
-    label: 'Jobs',
+    label: 'Jobs Post',
     roles: ['admin', 'superadmin', 'jobs'],
+    permissions: ['jobs.manage'],
     children: [
       {
         key: 'jobs-list',
@@ -199,6 +213,7 @@ export const MENU_ITEMS = [
     icon: 'iconamoon:store-thin',
     label: 'Events',
     roles: ['admin', 'superadmin'],
+    permissions: ['events.manage'],
     children: [
       {
         key: 'events-list',
@@ -219,6 +234,7 @@ export const MENU_ITEMS = [
     icon: 'iconamoon:calendar-1-duotone',
     label: 'CISR Events',
     roles: ['admin', 'superadmin'],
+    permissions: ['cisrEvents.manage'],
     children: [
       {
         key: 'cisr-events-list',
@@ -239,6 +255,7 @@ export const MENU_ITEMS = [
     icon: 'iconamoon:store-thin',
     label: 'Showrooms',
     roles: ['admin', 'superadmin'],
+    permissions: ['showrooms.manage'],
     children: [
       {
         key: 'showrooms-list',
@@ -259,6 +276,7 @@ export const MENU_ITEMS = [
     icon: 'iconamoon:trend-up-duotone',
     label: 'SEO Meta',
     roles: ['admin', 'superadmin'],
+    permissions: ['seoMeta.manage'],
     children: [
       {
         key: 'seo-meta-list',
@@ -281,12 +299,14 @@ export const MENU_ITEMS = [
     label: 'Administration',
     isTitle: true,
     roles: ['admin', 'superadmin'],
+    permissions: ['users.manage'],
   },
   {
     key: 'user-management',
     icon: 'iconamoon:profile-circle-duotone',
     label: 'User Management',
     roles: ['admin', 'superadmin'],
+    permissions: ['users.manage'],
     children: [
       {
         key: 'users-list',
@@ -314,6 +334,12 @@ export const MENU_ITEMS = [
     icon: 'iconamoon:lock-off-light',
     label: 'Authentication',
     children: [
+      {
+        key: 'auth-change-password',
+        label: 'Change Password',
+        url: '/auth/change-password',
+        parentKey: 'auth',
+      },
       {
         key: 'auth-logout',
         label: 'Logout',

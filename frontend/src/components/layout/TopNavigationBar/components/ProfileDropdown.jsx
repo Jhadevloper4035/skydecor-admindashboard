@@ -1,4 +1,5 @@
 import { Dropdown, DropdownDivider, DropdownHeader, DropdownItem, DropdownMenu, DropdownToggle } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import IconifyIcon from '@/components/wrappers/IconifyIcon';
 import avatar1 from '@/assets/images/users/avatar-1.jpg';
 import { useAuthContext } from '@/context/useAuthContext';
@@ -16,6 +17,10 @@ const ProfileDropdown = () => {
           <small className="text-muted text-capitalize">{user?.accessType ?? ''}</small>
         </DropdownHeader>
         <DropdownDivider className="dropdown-divider my-1" />
+        <DropdownItem as={Link} to="/auth/change-password">
+          <IconifyIcon icon="bx:lock-alt" className="fs-18 align-middle me-1" />
+          <span className="align-middle">Change Password</span>
+        </DropdownItem>
         <DropdownItem as="button" className="text-danger" onClick={removeSession}>
           <IconifyIcon icon="bx:log-out" className="fs-18 align-middle me-1" />
           <span className="align-middle">Logout</span>

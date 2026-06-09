@@ -101,7 +101,7 @@ const LeadStatusCharts = () => {
 
         <MiniChart title="Website Enquiries"  leads={webLeads}  loading={webLoading}  />
         <MiniChart title="Product Enquiries"  leads={prodLeads} loading={prodLoading} />
-        <MiniChart title="Job Applications"   leads={jobLeads}  loading={jobLoading}  />
+        <MiniChart title="Job Enquiry"        leads={jobLeads}  loading={jobLoading}  />
       </CardBody>
     </Card>
   );

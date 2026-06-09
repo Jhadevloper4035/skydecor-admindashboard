@@ -60,6 +60,7 @@ const QrCodes = lazy(() => import('@/app/(admin)/pages/qr-codes/page'))
 
 // User Management
 const UserManagement = lazy(() => import('@/app/(admin)/users/page'))
+const ChangePassword = lazy(() => import('@/app/(admin)/auth/change-password/page'))
 
 // Auth & Error Routes
 const AuthSignIn = lazy(() => import('@/app/(other)/auth/sign-in/page'))
@@ -253,90 +254,105 @@ const customRoutes = [
     path: '/seo-meta',
     element: <SeoMetaList />,
     roles: ['admin', 'superadmin'],
+    permissions: ['seoMeta.manage'],
   },
   {
     name: 'SEO Meta Create',
     path: '/seo-meta/create',
     element: <SeoMetaCreate />,
     roles: ['admin', 'superadmin'],
+    permissions: ['seoMeta.manage'],
   },
   {
     name: 'SEO Meta Detail',
     path: '/seo-meta/:seoId',
     element: <SeoMetaDetail />,
     roles: ['admin', 'superadmin'],
+    permissions: ['seoMeta.manage'],
   },
   {
     name: 'SEO Meta Edit',
     path: '/seo-meta/:seoId/edit',
     element: <SeoMetaEdit />,
     roles: ['admin', 'superadmin'],
+    permissions: ['seoMeta.manage'],
   },
   {
     name: 'Showrooms',
     path: '/showrooms',
     element: <Showrooms />,
     roles: ['admin', 'superadmin'],
+    permissions: ['showrooms.manage'],
   },
   {
     name: 'Showroom Create',
     path: '/showrooms/create',
     element: <ShowroomCreate />,
     roles: ['admin', 'superadmin'],
+    permissions: ['showrooms.manage'],
   },
   {
     name: 'Showroom Detail',
     path: '/showrooms/:showroomId',
     element: <ShowroomDetail />,
     roles: ['admin', 'superadmin'],
+    permissions: ['showrooms.manage'],
   },
   {
     name: 'Showroom Edit',
     path: '/showrooms/:showroomId/edit',
     element: <ShowroomEdit />,
     roles: ['admin', 'superadmin'],
+    permissions: ['showrooms.manage'],
   },
   {
-    name: 'Showroom Leads',
+    name: 'Leads',
     path: '/showroom-leads',
     element: <ShowroomLeads />,
     roles: ['admin', 'superadmin', 'event'],
+    permissions: ['showroomLeads.manage'],
   },
   {
-    name: 'Add Showroom Lead',
+    name: 'Add Showroom Enquiry',
     path: '/showroom-leads/add',
     element: <AddShowroomLead />,
     roles: ['admin', 'superadmin', 'event'],
+    permissions: ['showroomLeads.manage'],
   },
   {
     name: 'Website Leads',
     path: '/pages/website-leads',
     element: <WebsiteLeads />,
     roles: ['admin', 'superadmin', 'website', 'sales'],
+    permissions: ['websiteLeads.manage'],
   },
   {
     name: 'Product Enquiries',
     path: '/pages/product-enquiries',
     element: <ProductEnquiries />,
     roles: ['admin', 'superadmin', 'website', 'sales'],
+    permissions: ['productEnquiries.view'],
   },
   {
-    name: 'Job Applications',
+    name: 'Job Enquiry',
     path: '/pages/job-applications',
     element: <JobApplications />,
     roles: ['admin', 'superadmin', 'website', 'sales', 'jobs'],
+    permissions: ['jobApplications.view'],
   },
   {
     name: 'QR Codes',
     path: '/pages/qr-codes',
     element: <QrCodes />,
     roles: ['admin', 'superadmin', 'website', 'sales'],
+    permissions: ['qrCodes.manage'],
   },
   {
-    name: 'Event Leads',
+    name: 'Events Enquiry',
     path: '/pages/event-leads/:eventSlug',
     element: <EventLeads />,
     roles: ['admin', 'superadmin', 'event'],
+    permissions: ['eventLeads.view'],
   },
 ]
 
@@ -369,12 +385,20 @@ export const appRoutes = [
     path: '/users',
     element: <UserManagement />,
     roles: ['superadmin'],
+    permissions: ['users.manage'],
   },
   {
     name: 'Create User',
     path: '/auth/sign-up',
     element: <AuthSignUp />,
     roles: ['superadmin'],
+    permissions: ['users.manage'],
+  },
+  {
+    name: 'Change Password',
+    path: '/auth/change-password',
+    element: <ChangePassword />,
+    roles: ALL_ACCESS_TYPES,
   },
   ...authRoutes,
 ]
