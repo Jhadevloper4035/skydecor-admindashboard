@@ -93,6 +93,12 @@ export const MENU_ITEMS = [
         url: '/pages/event-leads/idac-mumbai-2026',
         parentKey: 'leads',
       },
+        {
+        key: 'event-lead-8',
+        label: 'DubaiWoodShow',
+        url: '/pages/event-leads/dubaiwoodshow',
+        parentKey: 'leads',
+      },
     ],
   },
 
