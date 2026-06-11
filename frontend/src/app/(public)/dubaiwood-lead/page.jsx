@@ -7,9 +7,10 @@ import logoWhite from '@/assets/images/logo-white.png'
 import dubaiwoodLogo from '@/assets/images/dubaiwoodshow/logo.png'
 
 const PRODUCT_OPTIONS = [
-  { value: 'Laminates', label: 'Laminates (0.8mm, 1mm+)' },
+  { value: '1mm+ Laminates', label: '1mm+ Laminates' },
+  { value: '0.8mm Laminates', label: '0.8mm Laminates' },
   { value: 'FR Flexi Laminates', label: 'FR Flexi Laminates' },
-  { value: 'Acrylish', label: 'Acrylish' },
+  { value: 'Acrylish Laminates', label: 'Acrylish Laminates' },
   { value: 'Soffitto', label: 'Soffitto' },
   { value: 'MDF', label: 'MDF' },
   { value: 'Skybond', label: 'Skybond' },
