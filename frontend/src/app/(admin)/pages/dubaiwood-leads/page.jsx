@@ -1,32 +1,21 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { Button, Col, Row } from 'react-bootstrap'
 import PageBreadcrumb from '@/components/layout/PageBreadcrumb'
 import PageMetaData from '@/components/PageTitle'
-import { Col, Row, Button } from 'react-bootstrap'
-
-import useEventLeadsStore from '@/store/eventLeadStore'
-import useEventStore from '@/store/eventStore'
 import { downloadExcel } from '@/helpers/httpClient'
-import EventLeadsTable from './components/EventLeadTable'
+import useDubaiwoodLeadsStore from '@/store/dubaiwoodLeadsStore'
 import { StatCard } from '../../dashboard/analytics/components/Stats'
+import DubaiwoodLeadsTable from './components/DubaiwoodLeadsTable'
 
-const EventLeads = () => {
+const DubaiwoodLeads = () => {
   const navigate = useNavigate()
-  const { eventSlug } = useParams()
-  const { leads, fetchLeads } = useEventLeadsStore()
-  const { events, fetchEvents } = useEventStore()
-
-  const place = eventSlug ? decodeURIComponent(eventSlug) : ''
-  const event = events.find((item) => item.slug === place)
-  const eventLabel = event?.title || place
+  const { leads, fetchLeads } = useDubaiwoodLeadsStore()
+  const [downloading, setDownloading] = useState(false)
 
   useEffect(() => {
-    if (place) fetchLeads(place)
-  }, [fetchLeads, place])
-
-  useEffect(() => {
-    fetchEvents()
-  }, [fetchEvents])
+    fetchLeads()
+  }, [fetchLeads])
 
   const stats = useMemo(() => {
     const userTypeCounts = leads.reduce((acc, lead) => {
@@ -38,10 +27,10 @@ const EventLeads = () => {
     const variants = ['primary', 'success', 'danger', 'warning', 'info']
     const userTypeStats = Object.entries(userTypeCounts)
       .sort((a, b) => b[1] - a[1])
-      .map(([type, count], idx) => ({
+      .map(([type, count], index) => ({
         amount: count.toString(),
         icon: 'iconamoon:profile-circle-duotone',
-        variant: variants[idx % variants.length],
+        variant: variants[index % variants.length],
         name: type,
       }))
 
@@ -56,12 +45,10 @@ const EventLeads = () => {
     ]
   }, [leads])
 
-  const [downloading, setDownloading] = useState(false)
-
   const handleDownloadExcel = async () => {
     setDownloading(true)
     try {
-      await downloadExcel(`/api/lead/event/download/${place}`, `Events-Enquiry-${place}.xlsx`)
+      await downloadExcel('/api/lead/dubaiwood/download', 'Dubaiwood-Show-Enquiry.xlsx')
     } finally {
       setDownloading(false)
     }
@@ -69,14 +56,12 @@ const EventLeads = () => {
 
   return (
     <>
-      <PageBreadcrumb subName="Pages" title={`Events Enquiry - ${eventLabel}`} />
-      <PageMetaData title={`Events Enquiry ${eventLabel} `} />
-
-   
+      <PageBreadcrumb subName="Pages" title="Dubaiwood Show Enquiry" />
+      <PageMetaData title="Dubaiwood Show Enquiry" />
 
       <Row className="mb-4">
-        {stats.map((stat, idx) => (
-          <Col xxl={6} md={6} key={idx}>
+        {stats.map((stat, index) => (
+          <Col xxl={6} md={6} key={index}>
             <StatCard {...stat} />
           </Col>
         ))}
@@ -84,10 +69,7 @@ const EventLeads = () => {
 
       <Row className="mb-4 justify-content-end">
         <Col xs="auto" className="d-flex gap-2 flex-wrap">
-          <Button
-            variant="outline-info"
-            onClick={() => navigate(`/event-lead/${encodeURIComponent(place)}`, { state: { eventTitle: eventLabel } })}
-          >
+          <Button variant="outline-info" onClick={() => navigate('/dubaiwood-lead')}>
             Add New Lead
           </Button>
           <Button variant="success" onClick={handleDownloadExcel} disabled={downloading}>
@@ -97,9 +79,9 @@ const EventLeads = () => {
         </Col>
       </Row>
 
-      <EventLeadsTable />
+      <DubaiwoodLeadsTable />
     </>
   )
 }
 
-export default EventLeads
+export default DubaiwoodLeads

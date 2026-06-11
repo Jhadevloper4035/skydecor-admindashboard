@@ -4,6 +4,7 @@ import { Navigate } from 'react-router-dom'
 
 // Public Routes
 const ShowroomLeadForm = lazy(() => import('@/app/(public)/showroom-lead/page'))
+const DubaiwoodLeadForm = lazy(() => import('@/app/(public)/dubaiwood-lead/page'))
 const ThankYou = lazy(() => import('@/app/(public)/thank-you/page'))
 
 // Dashboard Routes
@@ -53,6 +54,7 @@ const JobEdit = lazy(() => import('@/app/(admin)/jobs/[jobId]/edit/page'))
 const ShowroomLeads = lazy(() => import('@/app/(admin)/showroom-leads/page'))
 const AddShowroomLead = lazy(() => import('@/app/(admin)/showroom-leads/add/page'))
 const EventLeads = lazy(() => import('@/app/(admin)/pages/event-leads/page'))
+const DubaiwoodLeads = lazy(() => import('@/app/(admin)/pages/dubaiwood-leads/page'))
 const WebsiteLeads = lazy(() => import('@/app/(admin)/pages/website-leads/page'))
 const ProductEnquiries = lazy(() => import('@/app/(admin)/pages/product-enquiries/page'))
 const JobApplications = lazy(() => import('@/app/(admin)/pages/job-applications/page'))
@@ -148,7 +150,8 @@ const customRoutes = [
     name: 'Event Create',
     path: '/events/create',
     element: <EventCreate />,
-    roles: ['admin', 'superadmin', 'custom'],
+    roles: ['superadmin'],
+    strictRoles: ['superadmin'],
     permissions: ['events.manage'],
   },
   {
@@ -162,7 +165,8 @@ const customRoutes = [
     name: 'Event Edit',
     path: '/events/:eventId/edit',
     element: <EventEdit />,
-    roles: ['admin', 'superadmin', 'custom'],
+    roles: ['superadmin'],
+    strictRoles: ['superadmin'],
     permissions: ['events.manage'],
   },
   {
@@ -354,6 +358,13 @@ const customRoutes = [
     roles: ['admin', 'superadmin', 'event'],
     permissions: ['eventLeads.view'],
   },
+  {
+    name: 'Dubaiwood Show Enquiry',
+    path: '/pages/dubaiwood-leads',
+    element: <DubaiwoodLeads />,
+    roles: ['admin', 'superadmin', 'event', 'custom'],
+    permissions: ['dubaiwoodLeads.view'],
+  },
 ]
 
 export const authRoutes = [
@@ -414,6 +425,11 @@ export const publicRoutes = [
     name: 'Event Lead Form',
     path: '/event-lead/:eventSlug',
     element: <ShowroomLeadForm />,
+  },
+  {
+    name: 'Dubaiwood Lead Form',
+    path: '/dubaiwood-lead',
+    element: <DubaiwoodLeadForm />,
   },
   {
     name: 'Thank You',

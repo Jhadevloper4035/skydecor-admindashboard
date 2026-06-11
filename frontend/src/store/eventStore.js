@@ -18,7 +18,7 @@ const useEventStore = create(
 
         set({ loading: true, error: null }, false, "fetchEvents/start");
         try {
-          const data = await apiFetch("/api/events", {
+          const data = await apiFetch("/api/events?limit=1000", {
             headers: { "x-admin-secret": import.meta.env.VITE_ADMIN_SECRET },
           });
           set({ events: data?.data || data, loading: false, lastFetched: Date.now() }, false, "fetchEvents/success");

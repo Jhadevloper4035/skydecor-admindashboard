@@ -1,5 +1,6 @@
 // models/Contact.js
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 const contactSchema = new mongoose.Schema(
   {
@@ -29,10 +30,9 @@ const contactSchema = new mongoose.Schema(
       required: [true, "Mobile number is required"],
       validate: {
         validator: function (v) {
-          return /^\d{10}$/.test(v);
+          return validator.isMobilePhone(v.toString(), "any");
         },
-        message:
-          "Mobile number must be exactly 10 digits and contain only numbers",
+        message: "Please enter a valid mobile number",
       },
     },
 
@@ -48,6 +48,13 @@ const contactSchema = new mongoose.Schema(
     companyName: {
       type: String,
       trim: true,
+    },
+
+    country: {
+      type: String,
+      trim: true,
+      minlength: [2, "Country must be at least 2 characters"],
+      maxlength: [100, "Country cannot exceed 100 characters"],
     },
 
     city: {

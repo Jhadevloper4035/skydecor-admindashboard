@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Col, Container, Row, Spinner } from 'react-bootstrap'
 import ReactSelect from 'react-select'
 import { apiFetch } from '@/helpers/httpClient'
@@ -834,9 +834,11 @@ const labelStyle = { color: '#dee2e6', fontSize: 14, marginBottom: 6, display: '
 
 const ShowroomLeadForm = () => {
   const navigate = useNavigate()
+  const { state } = useLocation()
   const { eventSlug } = useParams()
-  const eventName = eventSlug ? decodeURIComponent(eventSlug) : ''
-  const isEventLead = Boolean(eventName)
+  const eventPlace = eventSlug ? decodeURIComponent(eventSlug) : ''
+  const eventName = state?.eventTitle || eventPlace
+  const isEventLead = Boolean(eventPlace)
   const [form, setForm] = useState(INITIAL)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -858,7 +860,7 @@ const ShowroomLeadForm = () => {
     setSubmitting(true)
     try {
       const submitUrl = isEventLead
-        ? `/api/lead/event/contact-form-submit/${encodeURIComponent(eventName)}`
+        ? `/api/lead/event/contact-form-submit/${encodeURIComponent(eventPlace)}`
         : '/api/lead/showroom/contact-form-submit'
 
       await apiFetch(submitUrl, {
@@ -866,7 +868,7 @@ const ShowroomLeadForm = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
-          place: eventName || form.place,
+          place: eventPlace || form.place,
         }),
       })
       navigate('/thank-you', {
@@ -874,7 +876,7 @@ const ShowroomLeadForm = () => {
           message: isEventLead
             ? `Your enquiry for ${eventName} has been submitted successfully. Our team will get in touch with you shortly.`
             : 'Your showroom enquiry has been submitted successfully. Our team will get in touch with you shortly.',
-          backPath: isEventLead ? `/event-lead/${encodeURIComponent(eventName)}` : '/showroom-lead',
+          backPath: isEventLead ? `/event-lead/${encodeURIComponent(eventPlace)}` : '/showroom-lead',
           backLabel: 'Submit Another Enquiry',
         },
       })

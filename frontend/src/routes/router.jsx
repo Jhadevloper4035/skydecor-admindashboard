@@ -28,7 +28,9 @@ const AppRouter = props => {
       return <Navigate to={defaultPath} replace />;
     }
     const hasPermissionRule = Array.isArray(route.permissions) && route.permissions.length > 0;
-    const roleAllowed = hasPermissionRule || !route.roles || route.roles.includes(user.accessType);
+    const roleAllowed = route.strictRoles
+      ? route.strictRoles.includes(user.accessType)
+      : hasPermissionRule || !route.roles || route.roles.includes(user.accessType);
     const permissionAllowed = hasAnyPermission(user, route.permissions || []);
 
     if (!roleAllowed || !permissionAllowed) {
