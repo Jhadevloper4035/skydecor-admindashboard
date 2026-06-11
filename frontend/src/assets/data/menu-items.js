@@ -93,11 +93,27 @@ export const MENU_ITEMS = [
         url: '/pages/event-leads/idac-mumbai-2026',
         parentKey: 'leads',
       },
-        {
-        key: 'event-lead-8',
-        label: 'DubaiWoodShow',
-        url: '/pages/event-leads/dubaiwoodshow',
-        parentKey: 'leads',
+    ],
+  },
+
+  {
+    key: 'dubaiwood-leads',
+    icon: 'iconamoon:comment-dots-duotone',
+    label: 'Dubaiwood Show',
+    roles: ['admin', 'superadmin', 'event', 'custom'],
+    permissions: ['dubaiwoodLeads.view'],
+    children: [
+      {
+        key: 'dubaiwood-leads-list',
+        label: 'All Enquiries',
+        url: '/pages/dubaiwood-leads',
+        parentKey: 'dubaiwood-leads',
+      },
+      {
+        key: 'dubaiwood-leads-add',
+        label: 'Add New Enquiry',
+        url: '/dubaiwood-lead',
+        parentKey: 'dubaiwood-leads',
       },
     ],
   },
@@ -232,6 +248,7 @@ export const MENU_ITEMS = [
         label: 'Create Event',
         url: '/events/create',
         parentKey: 'events',
+        strictRoles: ['superadmin'],
       },
     ],
   },

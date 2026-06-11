@@ -295,6 +295,99 @@ module.exports.downloadShowroomLeads = async (req, res) => {
   }
 };
 
+module.exports.submitFormDubaiwood = async (req, res) => {
+  try {
+    const { mobileNumber, ...rest } = req.body;
+
+    const existingLead = await Lead.findOne({
+      mobileNumber,
+      leadType: "dubaiwood",
+    });
+
+    if (existingLead) {
+      return res.status(409).json({
+        success: false,
+        status: "already_submitted",
+        message: "You have already submitted a Dubaiwood Show enquiry.",
+      });
+    }
+
+    const lead = await Lead.create({
+      ...rest,
+      mobileNumber,
+      leadType: "dubaiwood",
+      place: "dubaiwoodshow",
+    });
+
+    return res.status(201).json({
+      success: true,
+      status: "submitted",
+      message: "Thank you! Your Dubaiwood Show enquiry was submitted successfully.",
+      data: { id: lead._id },
+    });
+  } catch (error) {
+    console.error("Dubaiwood form submission error:", error);
+    if (error.name === "ValidationError") {
+      const message = Object.values(error.errors)
+        .map((fieldError) => fieldError.message)
+        .join(" ");
+
+      return res.status(400).json({
+        success: false,
+        status: "validation_error",
+        message,
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      status: "error",
+      message: "Error submitting form. Please try again.",
+    });
+  }
+};
+
+module.exports.getDubaiwoodLeads = async (req, res) => {
+  try {
+    const { page, limit, skip } = getPagination(req);
+
+    const { total, leads } = await fetchLeads(
+      { leadType: "dubaiwood" },
+      { skip, limit }
+    );
+
+    return res.status(200).json({
+      success: true,
+      status: "ok",
+      count: leads.length,
+      total,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      data: leads.map(formatProductType),
+    });
+  } catch (error) {
+    console.error("Dubaiwood leads error:", error);
+    return res.status(500).json({
+      success: false,
+      status: "error",
+      message: "Internal server error",
+    });
+  }
+};
+
+module.exports.downloadDubaiwoodLeads = async (req, res) => {
+  try {
+    await exportLeadsToExcel(res, { leadType: "dubaiwood" });
+  } catch (error) {
+    console.error("Dubaiwood Excel export error:", error);
+    res.status(500).json({
+      success: false,
+      status: "error",
+      message: "Error generating Excel file",
+    });
+  }
+};
+
 module.exports.getEnquiries = async (req, res) => {
   try {
     const { page, limit, skip } = getPagination(req);

@@ -44,7 +44,7 @@ router.use("/upload", uploadAccess, uploadRoute);
 router.use("/showrooms", protect, requirePermission("showrooms.manage"), showroomAdminRoute);
 router.use("/qr-code", protect, requirePermission("qrCodes.manage"), qrcodeAdminRoute);
 router.use("/seo-meta", protect, requirePermission("seoMeta.manage"), seoMetaAdminRoute);
-router.use("/events", protect, requirePermission("events.manage"), eventAdminRoute);
+router.use("/events", protect, eventAdminRoute);
 router.use("/cisr-events", protect, requirePermission("cisrEvents.manage"), cisrEventAdminRoute);
 router.use("/blog", protect, requirePermission("blogs.manage"), blogAdminRoute);
 router.use("/product", protect, requirePermission("products.manage"), productAdminRoute);

@@ -6,8 +6,9 @@ import PageBreadcrumb from '@/components/layout/PageBreadcrumb';
 import PageMetaData from '@/components/PageTitle';
 import IconifyIcon from '@/components/wrappers/IconifyIcon';
 import useEventStore from '@/store/eventStore';
+import { useAuthContext } from '@/context/useAuthContext';
 
-const EventCard = ({ event, onDelete, deleting }) => {
+const EventCard = ({ event, onDelete, deleting, canMutate }) => {
   const dateLabel = event.date
     ? new Date(event.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
     : '—';
@@ -61,22 +62,26 @@ const EventCard = ({ event, onDelete, deleting }) => {
           >
             <IconifyIcon icon="bx:show" />
           </Link>
-          <Link
-            to={`/events/${event._id}/edit`}
-            className="btn btn-sm btn-soft-secondary flex-fill py-1"
-            title="Edit"
-          >
-            <IconifyIcon icon="bx:edit" />
-          </Link>
-          <button
-            type="button"
-            className="btn btn-sm btn-soft-danger flex-fill py-1"
-            title="Delete"
-            onClick={() => onDelete(event)}
-            disabled={deleting}
-          >
-            {deleting ? <Spinner animation="border" size="sm" /> : <IconifyIcon icon="bx:trash" />}
-          </button>
+          {canMutate && (
+            <>
+              <Link
+                to={`/events/${event._id}/edit`}
+                className="btn btn-sm btn-soft-secondary flex-fill py-1"
+                title="Edit"
+              >
+                <IconifyIcon icon="bx:edit" />
+              </Link>
+              <button
+                type="button"
+                className="btn btn-sm btn-soft-danger flex-fill py-1"
+                title="Delete"
+                onClick={() => onDelete(event)}
+                disabled={deleting}
+              >
+                {deleting ? <Spinner animation="border" size="sm" /> : <IconifyIcon icon="bx:trash" />}
+              </button>
+            </>
+          )}
         </div>
       </Card>
     </Col>
@@ -85,8 +90,10 @@ const EventCard = ({ event, onDelete, deleting }) => {
 
 const Events = () => {
   const { events, loading, fetchEvents, deleteEvent } = useEventStore();
+  const { user } = useAuthContext();
   const [search, setSearch] = useState('');
   const [deletingId, setDeletingId] = useState(null);
+  const canMutate = user?.accessType === 'superadmin';
 
   useEffect(() => {
     fetchEvents();
@@ -155,10 +162,12 @@ const Events = () => {
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
-            <Link to="/events/create" className="btn btn-primary d-flex align-items-center">
-              <IconifyIcon icon="bx:plus" className="me-1" />
-              Add Event
-            </Link>
+            {canMutate && (
+              <Link to="/events/create" className="btn btn-primary d-flex align-items-center">
+                <IconifyIcon icon="bx:plus" className="me-1" />
+                Add Event
+              </Link>
+            )}
           </div>
         </CardBody>
       </Card>
@@ -177,6 +186,7 @@ const Events = () => {
               event={event}
               onDelete={handleDelete}
               deleting={deletingId === event._id}
+              canMutate={canMutate}
             />
           ))}
         </Row>

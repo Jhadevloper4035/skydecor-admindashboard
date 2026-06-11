@@ -24,6 +24,7 @@ const VALID_PERMISSIONS = [
   "jobApplications.view",
   "jobs.manage",
   "eventLeads.view",
+  "dubaiwoodLeads.view",
   "showroomLeads.manage",
 ];
 
@@ -44,7 +45,7 @@ const ROLE_PERMISSIONS = {
     "jobApplications.view",
     "qrCodes.manage",
   ],
-  event: ["dashboard.view", "eventLeads.view", "showroomLeads.manage"],
+  event: ["dashboard.view", "eventLeads.view", "dubaiwoodLeads.view", "showroomLeads.manage"],
   showroom: ["dashboard.view", "showroomLeads.manage"],
   jobs: ["jobs.manage", "jobApplications.view"],
   custom: [],

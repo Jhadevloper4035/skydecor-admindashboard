@@ -15,6 +15,7 @@ export const SERVICE_PERMISSIONS = [
   { value: 'jobApplications.view', label: 'Job Enquiry' },
   { value: 'jobs.manage', label: 'Job Posts' },
   { value: 'eventLeads.view', label: 'Events Enquiry' },
+  { value: 'dubaiwoodLeads.view', label: 'Dubaiwood Show Enquiry' },
   { value: 'showroomLeads.manage', label: 'Showroom Enquiry' },
 ];
 
@@ -23,7 +24,7 @@ const ROLE_PERMISSIONS = {
   admin: ['*'],
   website: ['dashboard.view', 'websiteLeads.manage', 'productEnquiries.view', 'jobApplications.view', 'qrCodes.manage'],
   sales: ['dashboard.view', 'websiteLeads.manage', 'productEnquiries.view', 'jobApplications.view', 'qrCodes.manage'],
-  event: ['dashboard.view', 'eventLeads.view', 'showroomLeads.manage'],
+  event: ['dashboard.view', 'eventLeads.view', 'dubaiwoodLeads.view', 'showroomLeads.manage'],
   showroom: ['dashboard.view', 'showroomLeads.manage'],
   jobs: ['jobs.manage', 'jobApplications.view'],
   custom: [],
@@ -47,6 +48,7 @@ export const getDefaultPathForUser = (user) => {
   if (hasPermission(user, 'websiteLeads.manage')) return '/pages/website-leads';
   if (hasPermission(user, 'productEnquiries.view')) return '/pages/product-enquiries';
   if (hasPermission(user, 'eventLeads.view')) return '/pages/event-leads/MATECIA 2025';
+  if (hasPermission(user, 'dubaiwoodLeads.view')) return '/pages/dubaiwood-leads';
   if (hasPermission(user, 'showroomLeads.manage')) return '/showroom-leads';
   if (hasPermission(user, 'products.manage')) return '/ecommerce/inventory';
   if (hasPermission(user, 'blogs.manage')) return '/blogs';

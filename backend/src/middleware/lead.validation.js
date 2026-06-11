@@ -46,3 +46,36 @@ module.exports.validateShowroomForm = (req, res, next) => {
 
   next();
 };
+
+module.exports.validateDubaiwoodForm = (req, res, next) => {
+  const { fullName, mobileNumber, userType, productType, companyName, country, representative, email } = req.body;
+  const required = { fullName, mobileNumber, userType, productType, companyName, country, representative };
+  const validUserTypes = ["Architect", "End Customer", "Retailer"];
+
+  for (const [field, value] of Object.entries(required)) {
+    if (!value || !value.toString().trim()) {
+      return res.status(400).json({ message: "All fields are required." });
+    }
+  }
+
+  if (!validUserTypes.includes(userType)) {
+    return res.status(400).json({ message: "Please select a valid user type." });
+  }
+
+  if (!validator.isLength(fullName.trim(), { min: 2, max: 100 })) {
+    return res.status(400).json({ message: "Name must be between 2 and 100 characters." });
+  }
+
+  const normalizedMobileNumber = mobileNumber.toString().replace(/[\s-]/g, "");
+
+  if (!validator.isMobilePhone(normalizedMobileNumber, "any")) {
+    return res.status(400).json({ message: "Please enter a valid mobile number." });
+  }
+
+  if (email && !validator.isEmail(email)) {
+    return res.status(400).json({ message: "Please enter a valid email address." });
+  }
+
+  req.body.mobileNumber = normalizedMobileNumber;
+  next();
+};

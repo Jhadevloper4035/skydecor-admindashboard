@@ -6,6 +6,7 @@ import PageBreadcrumb from '@/components/layout/PageBreadcrumb';
 import PageMetaData from '@/components/PageTitle';
 import IconifyIcon from '@/components/wrappers/IconifyIcon';
 import useEventStore from '@/store/eventStore';
+import { useAuthContext } from '@/context/useAuthContext';
 
 const Field = ({ label, value }) => (
   <div className="mb-3">
@@ -18,7 +19,9 @@ const EventDetail = () => {
   const { eventId } = useParams();
   const navigate = useNavigate();
   const { events, loading, fetchEvents, deleteEvent } = useEventStore();
+  const { user } = useAuthContext();
   const [deleting, setDeleting] = useState(false);
+  const canMutate = user?.accessType === 'superadmin';
 
   useEffect(() => {
     fetchEvents();
@@ -116,24 +119,28 @@ const EventDetail = () => {
               </div>
             </CardBody>
             <div className="border-top p-3 d-flex gap-2 flex-wrap">
-              <Link to={`/events/${eventId}/edit`} className="btn btn-primary flex-fill">
-                <IconifyIcon icon="bx:edit" className="me-1" />Edit
-              </Link>
+              {canMutate && (
+                <Link to={`/events/${eventId}/edit`} className="btn btn-primary flex-fill">
+                  <IconifyIcon icon="bx:edit" className="me-1" />Edit
+                </Link>
+              )}
               <Link to="/events" className="btn btn-outline-secondary flex-fill">
                 <IconifyIcon icon="bx:arrow-back" className="me-1" />Back
               </Link>
-              <button
-                type="button"
-                className="btn btn-danger w-100 mt-1"
-                onClick={handleDelete}
-                disabled={deleting}
-              >
-                {deleting
-                  ? <Spinner animation="border" size="sm" className="me-1" />
-                  : <IconifyIcon icon="bx:trash" className="me-1" />
-                }
-                Delete
-              </button>
+              {canMutate && (
+                <button
+                  type="button"
+                  className="btn btn-danger w-100 mt-1"
+                  onClick={handleDelete}
+                  disabled={deleting}
+                >
+                  {deleting
+                    ? <Spinner animation="border" size="sm" className="me-1" />
+                    : <IconifyIcon icon="bx:trash" className="me-1" />
+                  }
+                  Delete
+                </button>
+              )}
             </div>
           </Card>
         </Col>
