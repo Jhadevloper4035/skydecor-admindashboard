@@ -9,6 +9,13 @@ import dubaiwoodLogo from '@/assets/images/dubaiwoodshow/logo.png'
 const PRODUCT_OPTIONS = [
   { value: '0.8mm Laminates', label: '0.8mm Laminates' },
   { value: '1mm+ Laminates', label: '1mm+ Laminates' },
+  { value: 'PVC HPL', label: 'PVC HPL' },
+  { value: 'Decorative HPL', label: 'Decorative HPL' },
+  { value: 'Acrylic HPL', label: 'Acrylic HPL' },
+  { value: 'Edgeband', label: 'Edgeband' },
+  { value: 'MDF Boards', label: 'MDF Boards' },
+  { value: 'Acoustic Panels', label: 'Acoustic Panels' },
+  { value: 'Matteva', label: 'Matteva' },
 ]
 
 const USER_TYPE_OPTIONS = ['Architect', 'End Customer', 'Retailer'].map((type) => ({
