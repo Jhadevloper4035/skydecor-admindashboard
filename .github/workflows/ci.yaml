@@ -168,7 +168,7 @@ jobs:
             BACKEND_IMAGE=$BACKEND_IMAGE FRONTEND_IMAGE=$FRONTEND_IMAGE docker compose -f docker-compose.prod.yml pull
 
             # FIX 2: Stop and remove old containers before starting new ones
-            #         Without this, 'up -d' won't recreate containers even with a new image
+            # Without this, 'up -d' won't recreate containers even with a new image
             docker compose -f docker-compose.prod.yml down
 
             # 4. Start fresh containers from pulled images — no rebuild on EC2

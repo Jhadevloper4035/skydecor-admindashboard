@@ -51,6 +51,7 @@ module.exports.validateDubaiwoodForm = (req, res, next) => {
   const { fullName, mobileNumber, userType, productType, companyName, country, representative, email } = req.body;
   const required = { fullName, mobileNumber, userType, productType, companyName, country, representative };
   const validUserTypes = ["Architect", "End Customer", "Retailer"];
+  const validProductTypes = ["0.8mm Laminates", "1mm+ Laminates"];
 
   for (const [field, value] of Object.entries(required)) {
     if (!value || !value.toString().trim()) {
@@ -60,6 +61,14 @@ module.exports.validateDubaiwoodForm = (req, res, next) => {
 
   if (!validUserTypes.includes(userType)) {
     return res.status(400).json({ message: "Please select a valid user type." });
+  }
+
+  if (
+    !Array.isArray(productType) ||
+    productType.length === 0 ||
+    productType.some((product) => !validProductTypes.includes(product))
+  ) {
+    return res.status(400).json({ message: "Please select a valid product." });
   }
 
   if (!validator.isLength(fullName.trim(), { min: 2, max: 100 })) {
