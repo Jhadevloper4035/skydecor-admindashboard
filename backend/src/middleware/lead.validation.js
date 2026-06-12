@@ -51,7 +51,17 @@ module.exports.validateDubaiwoodForm = (req, res, next) => {
   const { fullName, mobileNumber, userType, productType, companyName, country, representative, email } = req.body;
   const required = { fullName, mobileNumber, userType, productType, companyName, country, representative };
   const validUserTypes = ["Architect", "End Customer", "Retailer"];
-  const validProductTypes = ["0.8mm Laminates", "1mm+ Laminates"];
+  const validProductTypes = [
+    "0.8mm Laminates",
+    "1mm+ Laminates",
+    "PVC HPL",
+    "Decorative HPL",
+    "Acrylic HPL",
+    "Edgeband",
+    "MDF Boards",
+    "Acoustic Panels",
+    "Matteva",
+  ];
 
   for (const [field, value] of Object.entries(required)) {
     if (!value || !value.toString().trim()) {
