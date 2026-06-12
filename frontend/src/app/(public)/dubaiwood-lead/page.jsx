@@ -103,7 +103,7 @@ const DubaiwoodLeadForm = () => {
 
       navigate('/thank-you', {
         state: {
-          message: 'Your Dubaiwood Show enquiry has been submitted successfully. Our team will get in touch with you shortly.',
+          message: 'Your Dubaiwood Show enquiry has been submitted successfully. Our team will get in touch with you shortly. ',
           backPath: '/dubaiwood-lead',
           backLabel: 'Submit Another Enquiry',
         },
